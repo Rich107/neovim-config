@@ -40,7 +40,7 @@ keymap.set("n", "<leader>wv", "<C-w>v", { desc = "Split window vertically" }) --
 keymap.set("n", "<leader>wh", "<C-w>s", { desc = "Split window horizontally" }) -- split window horizontally
 keymap.set("n", "<leader>we", "<C-w>=", { desc = "Make splits equal size" }) -- make split windows equal width & height
 keymap.set("n", "<leader>wx", "<cmd>close<CR>", { desc = "Close current split" }) -- close current split window
-keymap.set("n", "<leader>wo", "<cmd>only<CR>", { desc = "Close current split" }) -- close current split window
+keymap.set("n", "<leader>wo", "<cmd>only<CR>", { desc = "Close all but the current split" }) -- close current split window
 
 -- Moving Lines up and down
 keymap.set("v", "<C-j>", ":m'>+<CR>gv=gv", { desc = "Move line down in visual mode" })
