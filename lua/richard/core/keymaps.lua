@@ -4,7 +4,10 @@ vim.g.mapleader = " "
 local keymap = vim.keymap -- for conciseness
 
 ---------------------
--- General Keymaps -------------------
+-- General Key maps -------------------
+keymap.set("n", "<leader>cs", "<cmd>setlocal spell!<CR>", { desc = "Toggles spellchecker" })
+
+keymap.set("n", "<leader>ch", "<cmd>TSBufToggle highlight<CR>", { desc = "Toggles spellchecker" })
 
 -- use jk to exit insert mode
 keymap.set("i", "jk", "<ESC>", { desc = "Exit insert mode with jk" })
