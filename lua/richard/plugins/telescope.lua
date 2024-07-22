@@ -36,6 +36,7 @@ return {
 		keymap.set("n", "<leader>tt", "<cmd>TodoTelescope<cr>", { desc = "Find todos" })
 		keymap.set("n", "<leader>th", "<cmd>Telescope help_tags<cr>", { desc = "Help Search" })
 		keymap.set("n", "<leader>tj", "<cmd>Telescope jumplist<cr>", { desc = "Search though jumplist history" })
+		keymap.set("n", "<leader>tk", "<cmd>Telescope keymaps<cr>", { desc = "Search though keymaps" })
 		keymap.set(
 			"n",
 			"<leader>tb",
