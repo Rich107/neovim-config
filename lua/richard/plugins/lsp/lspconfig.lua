@@ -69,6 +69,9 @@ return {
 
 		-- used to enable autocompletion (assign to every lsp server config)
 		local capabilities = cmp_nvim_lsp.default_capabilities()
+		local mason_registry = require("mason-registry")
+		local vue_language_server_path = mason_registry.get_package("vue-language-server"):get_install_path()
+			.. "/node_modules/@vue/language-server"
 
 		-- Change the Diagnostic symbols in the sign column (gutter)
 		-- (not in youtube nvim video)
@@ -85,6 +88,32 @@ return {
 					capabilities = capabilities,
 				})
 			end,
+			["volar"] = function()
+				lspconfig["volar"].setup({
+					capabilities = capabilities,
+					filetypes = { "vue" },
+					languageFeatures = {
+						implementation = true, -- new in @volar/vue-language-server v0.33
+						references = true,
+						definition = true,
+						typeDefinition = true,
+						callHierarchy = true,
+						hover = true,
+						rename = true,
+						renameFileRefactoring = true,
+						signatureHelp = true,
+						codeAction = true,
+						workspaceSymbol = true,
+						completion = {
+							defaultTagNameCase = "both",
+							defaultAttrNameCase = "kebabCase",
+							getDocumentNameCasesRequest = false,
+							getDocumentSelectionRequest = false,
+						},
+					},
+				})
+			end,
+
 			-- ["svelte"] = function()
 			-- 	-- configure svelte server
 			-- 	lspconfig["svelte"].setup({
@@ -128,6 +157,21 @@ return {
 						"scss",
 						"less",
 						"svelte",
+						"javascript",
+					},
+				})
+			end,
+			["tsserver"] = function()
+				-- configure lua server (with special settings)
+				lspconfig["tsserver"].setup({
+					capabilities = capabilities,
+					filetypes = { "typescript", "javascript", "vue" },
+					init_options = {
+						plugins = {
+							name = "@vue/typescript-plugin",
+							location = vue_language_server_path,
+							languages = { "vue" },
+						},
 					},
 				})
 			end,

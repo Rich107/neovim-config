@@ -6,6 +6,9 @@ local opt = vim.opt -- for conciseness
 opt.spell = true
 opt.spelllang = "en_gb"
 
+-- Scrolling not waiting till it gets to the end
+opt.scrolloff = 15
+
 -- show commands for macros
 opt.cmdheight = 1
 
