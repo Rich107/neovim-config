@@ -7,7 +7,7 @@ return {
 
     -- set keymaps
     local keymap = vim.keymap -- for conciseness
--- todo: make hay whilst the sun is shining
+-- TODO: make hay whilst the sun is shining
     keymap.set("n", "]t", function()
       todo_comments.jump_next()
     end, { desc = "Next todo comment" })
