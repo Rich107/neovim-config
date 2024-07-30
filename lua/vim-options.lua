@@ -10,13 +10,16 @@ local keymap = vim.keymap -- for conciseness
 vim.opt.swapfile = false
 
 -- Navigate vim panes better
-keymap.set('n', '<c-k>', ':wincmd k<CR>')
-keymap.set('n', '<c-j>', ':wincmd j<CR>')
-keymap.set('n', '<c-h>', ':wincmd h<CR>')
-keymap.set('n', '<c-l>', ':wincmd l<CR>')
+keymap.set("n", "<c-k>", ":wincmd k<CR>")
+keymap.set("n", "<c-j>", ":wincmd j<CR>")
+keymap.set("n", "<c-h>", ":wincmd h<CR>")
+keymap.set("n", "<c-l>", ":wincmd l<CR>")
 vim.wo.number = true
 
----------------------
+-- line numbers
+vim.opt.relativenumber = true -- show relative line numbers
+vim.opt.number = true -- shows absolute line number on cursor line (when relative number is on)
+
 -- General Key maps -------------------
 keymap.set("n", "<leader>cs", "<cmd>setlocal spell!<CR>", { desc = "Toggles spellchecker" })
 
@@ -65,4 +68,3 @@ keymap.set("v", "<C-k>", ":m-2<CR>gv=gv", { desc = "Move line up in visual mode"
 -- closeing and saving
 keymap.set("n", "<leader>qq", "<cmd>q<CR>", { desc = "Close" })
 keymap.set("n", "<leader>qw", "<cmd>wq<CR>", { desc = "Save and Close" })
-
