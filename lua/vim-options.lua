@@ -16,6 +16,9 @@ keymap.set("n", "<c-h>", ":wincmd h<CR>")
 keymap.set("n", "<c-l>", ":wincmd l<CR>")
 vim.wo.number = true
 
+-- yank to system
+keymap.set("v", "<leader>y", '"+y', { desc = "yank to buffer" })
+
 -- line numbers
 vim.opt.relativenumber = true -- show relative line numbers
 vim.opt.number = true -- shows absolute line number on cursor line (when relative number is on)
@@ -46,7 +49,7 @@ keymap.set({ "n", "i" }, "<right>", "<nop>")
 
 -- faster movments with capitals:
 keymap.set({ "o", "v", "n" }, "H", "^", { desc = "Move Left super fast" })
-keymap.set({ "o", "v", "n" }, "L", "$", { desc = "Move Right super fast" }) -- Move to nd of line
+keymap.set({ "o", "v", "n" }, "L", "$", { desc = "Move Right super fast" }) -- Move to end of line
 keymap.set({ "o", "v", "n" }, "J", "}", { desc = "Move Down One Paragraph Super Fast" }) -- Move to next paragraph up
 keymap.set({ "o", "v", "n" }, "K", "{", { desc = "Move Up One Paragraph Super Fast" })
 
@@ -65,6 +68,15 @@ keymap.set("n", "<leader>wo", "<cmd>only<CR>", { desc = "Close all but the curre
 keymap.set("v", "<C-j>", ":m'>+<CR>gv=gv", { desc = "Move line down in visual mode" })
 keymap.set("v", "<C-k>", ":m-2<CR>gv=gv", { desc = "Move line up in visual mode" })
 
--- closeing and saving
+-- Closing and saving
 keymap.set("n", "<leader>qq", "<cmd>q<CR>", { desc = "Close" })
 keymap.set("n", "<leader>qw", "<cmd>wq<CR>", { desc = "Save and Close" })
+
+-- Highlight text when yanking
+vim.api.nvim_create_autocmd("TextYankPost", {
+	desc = "Highlight when yanking (copying) text",
+	group = vim.api.nvim_create_augroup("kickstart-highlight-yank", { clear = true }),
+	callback = function()
+		vim.highlight.on_yank()
+	end,
+})
