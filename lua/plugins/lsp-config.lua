@@ -62,9 +62,13 @@ return {
 							"sass",
 							"scss",
 							"less",
+							"vue",
 							"svelte",
 						},
 					})
+				end,
+				["python_ls"] = function()
+					lspconfig["python_ls"].setup({})
 				end,
 				["lua_ls"] = function()
 					-- configure lua server (with special settings)
@@ -132,7 +136,6 @@ return {
 						},
 					})
 				end,
-
 				["tsserver"] = function()
 					local mason_packages = vim.fn.stdpath("data") .. "/mason/packages"
 					local volar_path = mason_packages .. "/vue-language-server/node_modules/@vue/language-server"
