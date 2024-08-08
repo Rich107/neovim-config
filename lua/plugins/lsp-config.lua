@@ -50,6 +50,39 @@ return {
 						capabilities = capabilities,
 					})
 				end,
+				["emmet_ls"] = function()
+					-- configure emmet language server
+					lspconfig["emmet_ls"].setup({
+						capabilities = capabilities,
+						filetypes = {
+							"html",
+							"typescriptreact",
+							"javascriptreact",
+							"css",
+							"sass",
+							"scss",
+							"less",
+							"svelte",
+						},
+					})
+				end,
+				["lua_ls"] = function()
+					-- configure lua server (with special settings)
+					lspconfig["lua_ls"].setup({
+						capabilities = capabilities,
+						settings = {
+							Lua = {
+								-- make the language server recognize "vim" global
+								diagnostics = {
+									globals = { "vim" },
+								},
+								completion = {
+									callSnippet = "Replace",
+								},
+							},
+						},
+					})
+				end,
 				["volar"] = function()
 					require("lspconfig").volar.setup({
 						-- NOTE: Uncomment to enable volar in file types other than vue.
