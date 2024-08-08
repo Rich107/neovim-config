@@ -38,7 +38,7 @@ return {
 					require("lspconfig").volar.setup({
 						-- NOTE: Uncomment to enable volar in file types other than vue.
 						-- (Similar to Takeover Mode)
-
+						-- IMPORTANT: Make sure tsserver has a tsserver.config.json and tsserver.json file for your project!
 						-- filetypes = { "vue", "javascript", "typescript", "javascriptreact", "typescriptreact", "json" },
 
 						-- NOTE: Uncomment to restrict Volar to only Vue/Nuxt projects. This will enable Volar to work alongside other language servers (tsserver).
