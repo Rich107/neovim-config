@@ -25,13 +25,31 @@ vim.api.nvim_create_autocmd("FileType", {
 		vim.api.nvim_buf_set_keymap(0, "n", key_mappings.prev_misspelled, "[s", { noremap = true, silent = true })
 
 		-- Correct misspelling
-		vim.api.nvim_buf_set_keymap(0, "n", key_mappings.correct_misspelled, "z=", { noremap = true, silent = true })
+		vim.api.nvim_buf_set_keymap(
+			0,
+			"n",
+			key_mappings.correct_misspelled,
+			"z=",
+			{ desc = "Change word", noremap = true, silent = true }
+		)
 
 		-- Add word to spell file
-		vim.api.nvim_buf_set_keymap(0, "n", key_mappings.add_word, "zg", { noremap = true, silent = true })
+		vim.api.nvim_buf_set_keymap(
+			0,
+			"n",
+			key_mappings.add_word,
+			"zg",
+			{ desc = "Add word", noremap = true, silent = true }
+		)
 
 		-- Mark word as wrong
-		vim.api.nvim_buf_set_keymap(0, "n", key_mappings.mark_wrong, "zw", { noremap = true, silent = true })
+		vim.api.nvim_buf_set_keymap(
+			0,
+			"n",
+			key_mappings.mark_wrong,
+			"zw",
+			{ desc = "Mark wrong word", noremap = true, silent = true }
+		)
 
 		-- Toggle spell checking
 		vim.api.nvim_buf_set_keymap(
