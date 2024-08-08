@@ -13,7 +13,23 @@ return {
 			auto_install = true,
 		},
 		config = function()
-			require("mason-lspconfig").setup()
+			require("mason-lspconfig").setup({
+				ensure_installed = {
+					"tsserver",
+					"html",
+					"cssls",
+					"tailwindcss",
+					"svelte",
+					"lua_ls",
+					"graphql",
+					"emmet_ls",
+					"prismals",
+					"volar",
+					"docker_compose_language_service",
+					"dockerls",
+					"pyright",
+				},
+			})
 		end,
 	},
 	{
