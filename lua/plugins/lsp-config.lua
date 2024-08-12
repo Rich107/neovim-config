@@ -68,7 +68,12 @@ return {
 					})
 				end,
 				["python_ls"] = function()
-					lspconfig["python_ls"].setup({})
+					-- configure emmet language server
+					lspconfig["python_ls"].setup({
+						capabilities = capabilities,
+						on_attach = cmp_nvim_lsp.on_attach,
+						filetypes = { "python" },
+					})
 				end,
 				["lua_ls"] = function()
 					-- configure lua server (with special settings)
@@ -108,9 +113,9 @@ return {
 							},
 							-- NOTE: This might not be needed. Uncomment if you encounter issues.
 
-							-- typescript = {
-							--   tsdk = vim.fn.getcwd() .. "/node_modules/typescript/lib",
-							-- },
+							typescript = {
+								tsdk = vim.fn.getcwd() .. "/node_modules/typescript/lib",
+							},
 						},
 						settings = {
 							typescript = {

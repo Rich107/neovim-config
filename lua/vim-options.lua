@@ -1,7 +1,7 @@
 vim.cmd("set expandtab")
-vim.cmd("set tabstop=2")
-vim.cmd("set softtabstop=2")
-vim.cmd("set shiftwidth=2")
+vim.cmd("set tabstop=4")
+vim.cmd("set softtabstop=4")
+vim.cmd("set shiftwidth=4")
 vim.g.mapleader = " "
 vim.g.background = "light"
 
@@ -15,6 +15,9 @@ keymap.set("n", "<c-j>", ":wincmd j<CR>")
 keymap.set("n", "<c-h>", ":wincmd h<CR>")
 keymap.set("n", "<c-l>", ":wincmd l<CR>")
 vim.wo.number = true
+
+-- scroll gaps at top and bottom of page
+vim.opt.scrolloff = 15
 
 -- yank to system
 keymap.set("v", "<leader>y", '"+y', { desc = "yank to buffer" })
