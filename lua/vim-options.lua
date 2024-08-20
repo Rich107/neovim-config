@@ -83,3 +83,12 @@ vim.api.nvim_create_autocmd("TextYankPost", {
 		vim.highlight.on_yank()
 	end,
 })
+
+vim.api.nvim_create_autocmd("BufWritePre", {
+	pattern = "*.py",
+	callback = function()
+		local file = vim.fn.expand("%")
+		vim.cmd("silent! !ruff format " .. file)
+		vim.cmd("edit!") -- Reload the file from disk without prompts
+	end,
+})
