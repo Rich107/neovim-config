@@ -27,6 +27,8 @@ return {
 					"volar",
 					"docker_compose_language_service",
 					"dockerls",
+					"biome",
+					"ruff",
 					"pyright",
 				},
 			})
@@ -67,14 +69,31 @@ return {
 						},
 					})
 				end,
-				["python_ls"] = function()
+				["pyright"] = function()
 					-- configure emmet language server
-					lspconfig["python_ls"].setup({
+					lspconfig["pyright"].setup({
 						capabilities = capabilities,
-						on_attach = cmp_nvim_lsp.on_attach,
+						on_attach = function(client, bufnr)
+							-- Set up keybindings for code actions, if needed
+							vim.api.nvim_buf_set_keymap(
+								bufnr,
+								"n",
+								"<leader>ca",
+								"<cmd>lua vim.lsp.buf.code_action()<CR>",
+								{ noremap = true, silent = true }
+							)
+						end,
 						filetypes = { "python" },
 					})
 				end,
+				-- ["python_ls"] = function()
+				-- 	-- configure emmet language server
+				-- 	lspconfig["python_ls"].setup({
+				-- 		capabilities = capabilities,
+				-- 		on_attach = cmp_nvim_lsp.on_attach,
+				-- 		filetypes = { "python" },
+				-- 	})
+				-- end,
 				["lua_ls"] = function()
 					-- configure lua server (with special settings)
 					lspconfig["lua_ls"].setup({
