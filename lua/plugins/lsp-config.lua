@@ -29,6 +29,7 @@ return {
 					"dockerls",
 					"biome",
 					"ruff",
+					-- "mypy",
 					"pyright",
 				},
 			})
