@@ -9,7 +9,7 @@ return {
 			root_dir = lspconfig_util.root_pattern(".git", "pyproject.toml", "setup.py", "setup.cfg"),
 			sources = {
 				null_ls.builtins.diagnostics.mypy,
-				null_ls.builtins.diagnostics.ruff,
+				null_ls.builtins.diagnostics.biome,
 				-- null_ls.builtins.formatting.stylua,
 				-- null_ls.builtins.formatting.prettier,
 				-- null_ls.builtins.diagnostics.erb_lint,
