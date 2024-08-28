@@ -89,6 +89,6 @@ vim.api.nvim_create_autocmd("BufWritePre", {
 	callback = function()
 		local file = vim.fn.expand("%")
 		vim.cmd("silent! !ruff format " .. file)
-		vim.cmd("edit!") -- Reload the file from disk without prompts
+		-- vim.cmd("edit!") -- Reload the file from disk without prompts
 	end,
 })
