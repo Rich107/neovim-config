@@ -36,6 +36,9 @@ keymap.set("i", "jk", "<ESC>", { desc = "Exit insert mode with jk" })
 
 -- clear search highlights
 keymap.set("n", "<leader>nh", ":nohl<CR>", { desc = "Clear search highlights" })
+-- search case sensitive only with mixed case:
+vim.opt.ignorecase = true
+vim.opt.smartcase = true
 
 -- delete single character without copying into register
 keymap.set("n", "x", '"_x')
