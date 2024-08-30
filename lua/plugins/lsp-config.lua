@@ -29,6 +29,7 @@ return {
 					"dockerls",
 					"biome",
 					"ruff",
+					"terraformls",
 					-- "mypy",
 					"pyright",
 				},
@@ -81,12 +82,44 @@ return {
 								"n",
 								"<leader>ca",
 								"<cmd>lua vim.lsp.buf.code_action()<CR>",
-								{ noremap = true, silent = true }
+								-- { noremap = true, silent = true }
+								{ noremap = true }
 							)
 						end,
 						filetypes = { "python" },
 					})
 				end,
+				-- ["terraformls"] = function()
+				-- 	lspconfig["terraformls"].setup({
+				-- 		capabilities = capabilities,
+				-- 		filetypes = { "terraform", "hcl", "tf" }, -- Ensure these are correctly set
+				-- 		on_attach = function(client, bufnr)
+				-- 			-- Ensure commentstring is set correctly
+				-- 			vim.api.nvim_buf_set_option(bufnr, "commentstring", "# %s")
+				-- 		end,
+				-- 	})
+				-- end,
+				["terraformls"] = function()
+					lspconfig["terraformls"].setup({
+						capabilities = capabilities,
+						filetypes = { "terraform", "hcl", "tf" }, -- Ensure these are correctly set
+						root_dir = require("lspconfig").util.root_pattern("*.tf"),
+						on_attach = function(client, bufnr)
+							-- Ensure commentstring is set correctly
+							vim.api.nvim_buf_set_option(bufnr, "commentstring", "# %s")
+						end,
+					})
+				end,
+				-- ["terraform-lsp"] = function()
+				-- 	lspconfig["terraform-lsp"].setup({
+				-- 		capabilities = capabilities,
+				-- 		filetypes = { "terraform", "hcl", "tf" }, -- Ensure these are correctly set
+				-- 		on_attach = function(client, bufnr)
+				-- 			-- Ensure commentstring is set correctly
+				-- 			vim.api.nvim_buf_set_option(bufnr, "commentstring", "# %s")
+				-- 		end,
+				-- 	})
+				-- end,
 				-- ["python_ls"] = function()
 				-- 	-- configure emmet language server
 				-- 	lspconfig["python_ls"].setup({

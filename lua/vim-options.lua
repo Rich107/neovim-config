@@ -93,9 +93,7 @@ vim.api.nvim_create_autocmd("BufWritePre", {
 	end,
 })
 
--- Set highlight colors (overridden by colorscheme, hence after)
-
-vim.api.nvim_set_hl(0, "LineNr", { fg = "#6c7086" })
+-- Set highlight colors (overridden by colorscheme, hence after)-- vim.api.nvim_set_hl(0, "LineNr", { fg = "#6c7086" })
 vim.api.nvim_set_hl(0, "CursorLineNr", { fg = "#cdd6f4" }) -- bg = "#313244"
 vim.api.nvim_set_hl(0, "LineNrAbove", { fg = "#eba0ac" })
 vim.api.nvim_set_hl(0, "LineNrBelow", { fg = "#94e2d5" })
