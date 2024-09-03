@@ -14,6 +14,7 @@ return {
 		config = function()
 			require("telescope").setup({
 				defaults = {
+					prompt_prefix = "🔭 ", -- Adding the emoji as the prompt prefix
 					file_ignore_patterns = {
 						"node_modules",
 						"lib",
@@ -39,9 +40,19 @@ return {
 			})
 			local builtin = require("telescope.builtin")
 			local keymap = vim.keymap
+			-- keymap.set("n", "<leader>tw", function()
+			-- 	require("telescope.builtin").find_files({ "--hidden" })
+			-- end, { desc = "Fuzzy find files + failing to find hidden files" })
+			keymap.set("n", "<leader>tf", function()
+				require("telescope.builtin").find_files({
+					find_command = { "rg", "--ignore", "--hidden", "--files" },
+					prompt_prefix = "🔭 ",
+				})
+			end, { desc = "Fuzzy find files + hidden files" })
 
-			keymap.set("n", "<leader>tf", builtin.find_files, { desc = "Fuzzy by filename" })
-			keymap.set("n", "<leader>to", builtin.oldfiles, { desc = "Fuzzy search recent files" })
+			keymap.set("n", "<leader>to", function()
+				builtin.oldfiles({ cwd_only = true })
+			end, { desc = "Fuzzy search recent files in CWD" })
 			keymap.set("n", "<leader>t.", builtin.oldfiles, { desc = "Fuzzy search recent files" })
 			keymap.set("n", "<leader>tr", builtin.resume, { desc = "Go back to last search" })
 			keymap.set("n", "<leader>ts", builtin.live_grep, { desc = "Find string in cwd" })
