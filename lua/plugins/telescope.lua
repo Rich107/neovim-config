@@ -18,6 +18,8 @@ return {
 					file_ignore_patterns = {
 						"node_modules",
 						"lib",
+						".git/",
+						-- ".git/*",
 					},
 					-- Customizing path display to show only the filename and first two parent folders
 					path_display = function(opts, path)
