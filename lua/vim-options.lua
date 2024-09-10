@@ -9,6 +9,15 @@ local keymap = vim.keymap -- for conciseness
 
 vim.opt.swapfile = false
 
+-- Obsidian
+keymap.set("n", "<leader>ob", "<cmd>ObsidianBacklinks<CR>", { desc = "Obsidian Backlinks" })
+
+-- Spelling
+keymap.set("n", "<leader>cs", "z=", { desc = "Correct Spelling" })
+vim.keymap.set("n", "<leader>ss", function()
+	require("telescope.builtin").spell_suggest({ create_layout = spelling })
+end, { desc = "spell suggest" })
+
 -- -- Navigate vim panes better
 -- keymap.set("n", "<c-k>", ":wincmd k<CR>")
 -- keymap.set("n", "<c-j>", ":wincmd j<CR>")
@@ -27,7 +36,7 @@ vim.opt.relativenumber = true -- show relative line numbers
 vim.opt.number = true -- shows absolute line number on cursor line (when relative number is on)
 
 -- General Key maps -------------------
-keymap.set("n", "<leader>cs", "<cmd>setlocal spell!<CR>", { desc = "Toggles spellchecker" })
+-- keymap.set("n", "<leader>cs", "<cmd>setlocal spell!<CR>", { desc = "Toggles spellchecker" })
 
 keymap.set("n", "<leader>ch", "<cmd>TSBufToggle highlight<CR>", { desc = "Toggles spellchecker" })
 
