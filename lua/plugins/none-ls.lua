@@ -10,7 +10,6 @@ return {
 			sources = {
 				null_ls.builtins.diagnostics.mypy,
 				null_ls.builtins.formatting.terraform_fmt,
-				null_ls.builtins.formatting.terrafmt, -- markdown
 				null_ls.builtins.diagnostics.terraform_validate,
 				-- null_ls.builtins.diagnostics.biome,
 				-- null_ls.builtins.formatting.stylua,
