@@ -55,6 +55,18 @@ return {
 			keymap.set("n", "<leader>to", function()
 				builtin.oldfiles({ cwd_only = true })
 			end, { desc = "Fuzzy search recent files in CWD" })
+			keymap.set("n", "<leader>ss", function()
+				require("telescope.builtin").spell_suggest({
+					sorting_strategy = "ascending",
+					layout_strategy = "horizontal",
+					layout_config = {
+						prompt_position = "top", -- Places the prompt at the top
+						width = 0.8, -- Optional: Adjust the width of the finder
+						height = 0.5, -- Optional: Adjust the height of the finder
+					},
+				})
+			end, { desc = "spell suggest" })
+
 			keymap.set("n", "<leader>t.", builtin.oldfiles, { desc = "Fuzzy search recent files" })
 			keymap.set("n", "<leader>tr", builtin.resume, { desc = "Go back to last search" })
 			keymap.set("n", "<leader>ts", builtin.live_grep, { desc = "Find string in cwd" })
