@@ -15,9 +15,10 @@ return {
 		config = function()
 			require("mason-lspconfig").setup({
 				ensure_installed = {
-					"tsserver",
+					-- "tsserver",
+					-- "typescript-language-server",
 					"html",
-					"cssls",
+					"scssls",
 					"tailwindcss",
 					"svelte",
 					"lua_ls",
