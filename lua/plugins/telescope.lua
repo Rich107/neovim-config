@@ -76,6 +76,7 @@ return {
 			keymap.set("n", "<leader>th", builtin.help_tags, { desc = "Help Search" })
 			keymap.set("n", "<leader>tj", builtin.jumplist, { desc = "Search though jumplist history" })
 			keymap.set("n", "<leader>tk", builtin.keymaps, { desc = "Search though keymaps" })
+			keymap.set("n", "<leader>ty", builtin.registers, { desc = "Search though registers" })
 			keymap.set("n", "<leader>td", function()
 				builtin.diagnostics({ bufnr = 0 })
 			end, { desc = "Search diagnostics in current buffer" })
