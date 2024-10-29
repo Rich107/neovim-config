@@ -7,6 +7,8 @@ vim.g.background = "light"
 
 local keymap = vim.keymap -- for conciseness
 
+vim.o.wrap = false
+
 vim.opt.swapfile = false
 
 -- Alt key will not let me type # it types £ instead
