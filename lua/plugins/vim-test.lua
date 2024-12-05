@@ -4,11 +4,18 @@ return {
 		"preservim/vimux",
 	},
 	config = function()
-		vim.keymap.set("n", "<leader>rt", ":TestNearest<CR>", { desc = "Test Nejrest" })
-		vim.keymap.set("n", "<leader>rT", ":TestFile<CR>", { desc = "TestFile" })
-		vim.keymap.set("n", "<leader>ra", ":TestSuite<CR>", { desc = "TestSuite" })
-		vim.keymap.set("n", "<leader>rl", ":TestLast<CR>", { desc = "TestLast" })
-		vim.keymap.set("n", "<leader>rg", ":TestVisit<CR>", { desc = "TestVisit" })
+		vim.keymap.set(
+			"n",
+			"<leader>rt",
+			":TestNearest<CR>",
+			{ desc = "Test Nearest - The nearest test to your curosr" }
+		)
+		vim.keymap.set("n", "<leader>rT", ":TestFile<CR>", { desc = "TestFile - Test the whole open file" })
+		vim.keymap.set("n", "<leader>ra", ":TestSuite<CR>", { desc = "TestSuite - Run all the tests" })
+		vim.keymap.set("n", "<leader>rl", ":TestLast<CR>", { desc = "TestLast - Runs the last test again" })
+		vim.keymap.set("n", "<leader>rv", ":TestVisit<CR>", { desc = "Test Visit - The last test you ran" })
 		vim.cmd("let test#strategy = 'vimux'")
+		-- vim.cmd("let test#python#pytest#executable='docker compose -f ../docker-compose.yaml exec rest-api pytest'")
+		vim.cmd("let test#python#pytest#executable='docker compose exec rest-api pytest --disable-warnings -vv'")
 	end,
 }
