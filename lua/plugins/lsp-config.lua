@@ -243,6 +243,7 @@ return {
 					vim.keymap.set("n", "<leader>k", vim.lsp.buf.hover, {})
 					vim.keymap.set("n", "<leader>gr", vim.lsp.buf.references, {})
 					vim.keymap.set("n", "<leader>ca", vim.lsp.buf.code_action, {})
+					vim.keymap.set("n", "<leader>cn", vim.lsp.buf.rename, {})
 				end,
 			})
 		end,
