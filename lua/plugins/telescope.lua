@@ -77,6 +77,11 @@ return {
 			keymap.set("n", "<leader>tj", builtin.jumplist, { desc = "Search though jumplist history" })
 			keymap.set("n", "<leader>tk", builtin.keymaps, { desc = "Search though keymaps" })
 			keymap.set("n", "<leader>ty", builtin.registers, { desc = "Search though registers" })
+			keymap.set("n", "<leader>tn", function()
+				require("telescope.builtin").find_files({
+					cwd = vim.fn.stdpath("config"),
+				})
+			end)
 			keymap.set("n", "<leader>td", function()
 				builtin.diagnostics({ bufnr = 0 })
 			end, { desc = "Search diagnostics in current buffer" })
@@ -105,7 +110,7 @@ return {
 					prompt_title = "Live Grep in Open Files",
 				})
 			end, { desc = "[S]earch [/] in Open Files" })
-
+			require("plugins.telescope.smartgrep").setup()
 			require("telescope").load_extension("ui-select")
 			require("telescope").load_extension("fzf")
 		end,
