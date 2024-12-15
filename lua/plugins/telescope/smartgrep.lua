@@ -18,12 +18,12 @@ local live_smartgrep = function(opts)
 			local pieces = vim.split(prompt, "  ")
 			local args = { "rg" }
 			if pieces[1] then
-				table.insert(arg, "-e")
-				table.insert(arg, pieces[1])
+				table.insert(args, "-e")
+				table.insert(args, pieces[1])
 			end
 
 			if pieces[2] then
-				table.insert(arg, "-g")
+				table.insert(args, "-g")
 				table.insert(args, pieces[2])
 			end
 
