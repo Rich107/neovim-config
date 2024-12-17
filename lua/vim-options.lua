@@ -99,10 +99,14 @@ vim.api.nvim_create_autocmd("TextYankPost", {
 vim.api.nvim_create_autocmd("BufWritePre", {
 	pattern = "*.py",
 	callback = function()
-		local file = vim.fn.expand("%")
-		vim.cmd("silent! !ruff format " .. file)
-		-- vim.cmd("!ruff format " .. file)
-		vim.cmd("checktime")
+		local bufnr = vim.api.nvim_get_current_buf()
+		local content = vim.api.nvim_buf_get_lines(bufnr, 0, -1, false)
+		local result = vim.system({ "ruff", "format", "-" }, { stdin = table.concat(content, "\n") }):wait()
+
+		if result.code == 0 then
+			local formatted = vim.split(result.stdout, "\n")
+			vim.api.nvim_buf_set_lines(bufnr, 0, -1, false, formatted)
+		end
 	end,
 })
 
