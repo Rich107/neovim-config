@@ -81,7 +81,7 @@ return {
 				require("telescope.builtin").find_files({
 					cwd = vim.fn.stdpath("config"),
 				})
-			end)
+			end, { desc = "Search neovim config" })
 			keymap.set("n", "<leader>td", function()
 				builtin.diagnostics({ bufnr = 0 })
 			end, { desc = "Search diagnostics in current buffer" })
