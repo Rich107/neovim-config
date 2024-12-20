@@ -140,3 +140,6 @@ pytest
 LSP
 mypy
 onboarding
+filterset
+auth
+etl
