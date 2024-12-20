@@ -18,7 +18,6 @@ return {
 					-- "tsserver",
 					-- "typescript-language-server",
 					"html",
-					"scssls",
 					"tailwindcss",
 					"svelte",
 					"lua_ls",
