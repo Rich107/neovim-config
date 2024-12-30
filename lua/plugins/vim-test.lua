@@ -18,11 +18,11 @@ return {
 		vim.cmd("let test#python#runner = 'pytest'")
 
 		-- This is working for PA-Leaderboard app
-		-- vim.cmd("let test#python#pytest#executable='docker compose exec rest-api pytest --disable-warnings -vv '")
+		vim.cmd("let test#python#pytest#executable='docker compose exec rest-api pytest --disable-warnings -vv '")
 
 		-- This is working for Legl app (python only)
-		vim.cmd([[
-		        let g:test#python#pytest#executable = 'docker compose exec server pytest --disable-warnings -vv'
-		        ]])
+		-- vim.cmd([[
+		--         let g:test#python#pytest#executable = 'docker compose exec server pytest --disable-warnings -vv'
+		--         ]])
 	end,
 }
