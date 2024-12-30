@@ -89,16 +89,6 @@ return {
 						filetypes = { "python" },
 					})
 				end,
-				-- ["terraformls"] = function()
-				-- 	lspconfig["terraformls"].setup({
-				-- 		capabilities = capabilities,
-				-- 		filetypes = { "terraform", "hcl", "tf" }, -- Ensure these are correctly set
-				-- 		on_attach = function(client, bufnr)
-				-- 			-- Ensure commentstring is set correctly
-				-- 			vim.api.nvim_buf_set_option(bufnr, "commentstring", "# %s")
-				-- 		end,
-				-- 	})
-				-- end,
 				["terraformls"] = function()
 					lspconfig["terraformls"].setup({
 						capabilities = capabilities,
@@ -110,24 +100,6 @@ return {
 						end,
 					})
 				end,
-				-- ["terraform-lsp"] = function()
-				-- 	lspconfig["terraform-lsp"].setup({
-				-- 		capabilities = capabilities,
-				-- 		filetypes = { "terraform", "hcl", "tf" }, -- Ensure these are correctly set
-				-- 		on_attach = function(client, bufnr)
-				-- 			-- Ensure commentstring is set correctly
-				-- 			vim.api.nvim_buf_set_option(bufnr, "commentstring", "# %s")
-				-- 		end,
-				-- 	})
-				-- end,
-				-- ["python_ls"] = function()
-				-- 	-- configure emmet language server
-				-- 	lspconfig["python_ls"].setup({
-				-- 		capabilities = capabilities,
-				-- 		on_attach = cmp_nvim_lsp.on_attach,
-				-- 		filetypes = { "python" },
-				-- 	})
-				-- end,
 				["lua_ls"] = function()
 					-- configure lua server (with special settings)
 					lspconfig["lua_ls"].setup({
