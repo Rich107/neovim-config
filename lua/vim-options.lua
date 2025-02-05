@@ -110,20 +110,20 @@ vim.api.nvim_create_autocmd("BufWritePre", {
 	end,
 })
 
--- Set highlight colors (overridden by colorscheme, hence after)-- vim.api.nvim_set_hl(0, "LineNr", { fg = "#6c7086" })
-vim.api.nvim_set_hl(0, "CursorLineNr", { fg = "#cdd6f4" }) -- bg = "#313244"
-vim.api.nvim_set_hl(0, "LineNrAbove", { fg = "#eba0ac" })
-vim.api.nvim_set_hl(0, "LineNrBelow", { fg = "#94e2d5" })
--- Set line number to be a bit darker
-vim.api.nvim_set_hl(0, "Status_LineNr", { fg = "#6c7086" })
--- Color background the same as normal but color text light grey, use 'Vertical Line Extension' ⏐ unicode U+23D0
-vim.api.nvim_set_hl(0, "Status_DivLine", { bg = "#1e1e2e", fg = "#313244" })
--- Set number and relativenumber options
-vim.wo.number = true
-vim.wo.relativenumber = true
--- Highlight current line, to hide and only use number highlight uncomment " set cursorlineopt
-vim.wo.cursorline = true
--- Set signcolumn to always show and limit to 1 char so stuff doesn't move when LSP error occurs
-vim.wo.signcolumn = "yes:1"
--- Configure statuscolumn
-vim.o.statuscolumn = "%C%s%#Status_LineNr#%3.3l%* %-2.2r%#Status_DivLine#⏐%*"
+-- -- Set highlight colors (overridden by colorscheme, hence after)-- vim.api.nvim_set_hl(0, "LineNr", { fg = "#6c7086" })
+-- vim.api.nvim_set_hl(0, "CursorLineNr", { fg = "#cdd6f4" }) -- bg = "#313244"
+-- vim.api.nvim_set_hl(0, "LineNrAbove", { fg = "#eba0ac" })
+-- vim.api.nvim_set_hl(0, "LineNrBelow", { fg = "#94e2d5" })
+-- -- Set line number to be a bit darker
+-- vim.api.nvim_set_hl(0, "Status_LineNr", { fg = "#6c7086" })
+-- -- Color background the same as normal but color text light grey, use 'Vertical Line Extension' ⏐ unicode U+23D0
+-- vim.api.nvim_set_hl(0, "Status_DivLine", { bg = "#1e1e2e", fg = "#313244" })
+-- -- Set number and relativenumber options
+-- vim.wo.number = true
+-- vim.wo.relativenumber = true
+-- -- Highlight current line, to hide and only use number highlight uncomment " set cursorlineopt
+-- vim.wo.cursorline = true
+-- -- Set signcolumn to always show and limit to 1 char so stuff doesn't move when LSP error occurs
+-- vim.wo.signcolumn = "yes:1"
+-- -- Configure statuscolumn
+-- vim.o.statuscolumn = "%C%s%#Status_LineNr#%3.3l%* %-2.2r%#Status_DivLine#⏐%*"
