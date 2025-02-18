@@ -22,7 +22,7 @@ return {
 
         -- This is working for Legl app (python only)
         vim.cmd([[
-		        let g:test#python#pytest#executable = 'docker compose exec server pytest --disable-warnings -vv'
+		        let g:test#python#pytest#executable = 'docker compose exec server pytest --disable-warnings -vv --create-db'
 		        ]])
     end,
 }
