@@ -1,4 +1,4 @@
-if not vim.env.IN_CONTAINER then
+if not vim.env.DEVPOD then
 	vim.notify("We are Running on the host")
 	return {
 		"christoomey/vim-tmux-navigator",
