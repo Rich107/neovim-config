@@ -8,9 +8,9 @@ if not vim.env.IN_CONTAINER then
 	}
 else
 	-- This is until I get TMUX in TMUX In a place that I am happy with it if ever...
-	vim.keymap.set("n", "<C-h>", "<C-w>h", { silent = true })
-	vim.keymap.set("n", "<C-j>", "<C-w>j", { silent = true })
-	vim.keymap.set("n", "<C-k>", "<C-w>k", { silent = true })
-	vim.keymap.set("n", "<C-l>", "<C-w>l", { silent = true })
+	vim.api.nvim_set_keymap("n", "<C-h>", "<C-w>h", { noremap = true, silent = true })
+	vim.api.nvim_set_keymap("n", "<C-j>", "<C-w>j", { noremap = true, silent = true })
+	vim.api.nvim_set_keymap("n", "<C-k>", "<C-w>k", { noremap = true, silent = true })
+	vim.api.nvim_set_keymap("n", "<C-l>", "<C-w>l", { noremap = true, silent = true })
 	return {} -- No plugins returned
 end
