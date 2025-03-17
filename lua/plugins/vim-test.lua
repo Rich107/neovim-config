@@ -3,6 +3,7 @@ return {
 	dependencies = {
 		"preservim/vimux",
 	},
+	-- TODO: only enable this when not inside a container
 	config = function()
 		vim.keymap.set(
 			"n",
