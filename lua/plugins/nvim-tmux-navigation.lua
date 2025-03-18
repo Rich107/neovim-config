@@ -9,10 +9,10 @@ if not vim.env.DEVPOD then
 	}
 else
 	-- This is until I get TMUX in TMUX In a place that I am happy with it if ever...
-	vim.api.nvim_set_keymap("n", "<C-h>", "<C-w>h", { noremap = true, silent = true })
-	vim.api.nvim_set_keymap("n", "<C-j>", "<C-w>j", { noremap = true, silent = true })
-	vim.api.nvim_set_keymap("n", "<C-k>", "<C-w>k", { noremap = true, silent = true })
-	vim.api.nvim_set_keymap("n", "<C-l>", "<C-w>l", { noremap = true, silent = true })
+	vim.api.nvim_set_keymap("n", "<C-h>", "<Cmd>wincmd h<CR>", { noremap = true, silent = true })
+	vim.api.nvim_set_keymap("n", "<C-j>", "<Cmd>wincmd j<CR>", { noremap = true, silent = true })
+	vim.api.nvim_set_keymap("n", "<C-k>", "<Cmd>wincmd k<CR>", { noremap = true, silent = true })
+	vim.api.nvim_set_keymap("n", "<C-l>", "<Cmd>wincmd l<CR>", { noremap = true, silent = true })
 	vim.notify("We are Running in a container")
 	return {} -- No plugins returned
 end
