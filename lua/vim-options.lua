@@ -11,6 +11,21 @@ vim.o.wrap = false
 
 vim.opt.swapfile = false
 
+-- This allows copy paste to work in ssh connections:
+local osc52 = require("vim.ui.clipboard.osc52")
+
+vim.g.clipboard = {
+    name = "OSC 52",
+    copy = {
+        ["+"] = osc52.copy("+"),
+        ["*"] = osc52.copy("*"),
+    },
+    paste = {
+        ["+"] = osc52.paste("+"),
+        ["*"] = osc52.paste("*"),
+    },
+}
+
 -- Alt key will not let me type # it types £ instead
 keymap.set("i", "£", "#", { desc = "Type # instead of £" })
 
@@ -28,7 +43,7 @@ keymap.set("v", "<leader>y", '"+y', { desc = "yank to buffer" })
 
 -- line numbers
 vim.opt.relativenumber = true -- show relative line numbers
-vim.opt.number = true -- shows absolute line number on cursor line (when relative number is on)
+vim.opt.number = true         -- shows absolute line number on cursor line (when relative number is on)
 
 -- go to url:
 vim.keymap.set("n", "gx", "<esc>:URLOpenUnderCursor<cr>")
@@ -64,7 +79,7 @@ keymap.set({ "n", "i" }, "<right>", "<nop>")
 
 -- faster movments with capitals:
 keymap.set({ "o", "v", "n" }, "H", "^", { desc = "Move Left super fast" })
-keymap.set({ "o", "v", "n" }, "L", "$", { desc = "Move Right super fast" }) -- Move to end of line
+keymap.set({ "o", "v", "n" }, "L", "$", { desc = "Move Right super fast" })              -- Move to end of line
 keymap.set({ "o", "v", "n" }, "J", "}", { desc = "Move Down One Paragraph Super Fast" }) -- Move to next paragraph up
 keymap.set({ "o", "v", "n" }, "K", "{", { desc = "Move Up One Paragraph Super Fast" })
 
@@ -73,10 +88,10 @@ keymap.set("n", "<leader>h", "<C-o>", { desc = "Jump back in history" })
 keymap.set("n", "<leader>l", "<C-i>", { desc = "Jump back in history" })
 
 -- window management
-keymap.set("n", "<leader>wv", "<C-w>v", { desc = "Split window vertically" }) -- split window vertically
-keymap.set("n", "<leader>wh", "<C-w>s", { desc = "Split window horizontally" }) -- split window horizontally
-keymap.set("n", "<leader>we", "<C-w>=", { desc = "Make splits equal size" }) -- make split windows equal width & height
-keymap.set("n", "<leader>wx", "<cmd>close<CR>", { desc = "Close current split" }) -- close current split window
+keymap.set("n", "<leader>wv", "<C-w>v", { desc = "Split window vertically" })                -- split window vertically
+keymap.set("n", "<leader>wh", "<C-w>s", { desc = "Split window horizontally" })              -- split window horizontally
+keymap.set("n", "<leader>we", "<C-w>=", { desc = "Make splits equal size" })                 -- make split windows equal width & height
+keymap.set("n", "<leader>wx", "<cmd>close<CR>", { desc = "Close current split" })            -- close current split window
 keymap.set("n", "<leader>wo", "<cmd>only<CR>", { desc = "Close all but the current split" }) -- close current split window
 
 -- Moving Lines up and down
@@ -89,25 +104,25 @@ keymap.set("n", "<leader>qw", "<cmd>wq<CR>", { desc = "Save and Close" })
 
 -- Highlight text when yanking
 vim.api.nvim_create_autocmd("TextYankPost", {
-	desc = "Highlight when yanking (copying) text",
-	group = vim.api.nvim_create_augroup("kickstart-highlight-yank", { clear = true }),
-	callback = function()
-		vim.highlight.on_yank()
-	end,
+    desc = "Highlight when yanking (copying) text",
+    group = vim.api.nvim_create_augroup("kickstart-highlight-yank", { clear = true }),
+    callback = function()
+        vim.highlight.on_yank()
+    end,
 })
 
 vim.api.nvim_create_autocmd("BufWritePre", {
-	pattern = "*.py",
-	callback = function()
-		local bufnr = vim.api.nvim_get_current_buf()
-		local content = vim.api.nvim_buf_get_lines(bufnr, 0, -1, false)
-		local result = vim.system({ "ruff", "format", "-" }, { stdin = table.concat(content, "\n") }):wait()
+    pattern = "*.py",
+    callback = function()
+        local bufnr = vim.api.nvim_get_current_buf()
+        local content = vim.api.nvim_buf_get_lines(bufnr, 0, -1, false)
+        local result = vim.system({ "ruff", "format", "-" }, { stdin = table.concat(content, "\n") }):wait()
 
-		if result.code == 0 then
-			local formatted = vim.split(result.stdout, "\n")
-			vim.api.nvim_buf_set_lines(bufnr, 0, -1, false, formatted)
-		end
-	end,
+        if result.code == 0 then
+            local formatted = vim.split(result.stdout, "\n")
+            vim.api.nvim_buf_set_lines(bufnr, 0, -1, false, formatted)
+        end
+    end,
 })
 
 -- -- Set highlight colors (overridden by colorscheme, hence after)-- vim.api.nvim_set_hl(0, "LineNr", { fg = "#6c7086" })
