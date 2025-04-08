@@ -2,11 +2,11 @@ return {
 	{
 		"epwalsh/obsidian.nvim",
 		version = "*",
-		lazy = true,
 		ft = "markdown",
 		dependencies = {
 			"nvim-lua/plenary.nvim",
 
+			-- Treesitter config
 			{
 				"nvim-treesitter/nvim-treesitter",
 				build = ":TSUpdate",
@@ -21,36 +21,39 @@ return {
 				end,
 			},
 
-			{
-				"MeanderingProgrammer/render-markdown.nvim",
-				config = function()
-					require("render-markdown").setup({
-						headings = { "▍", "▌", "▋", "▊", "▉", "█" },
-						bullets = { "•", "◦", "▪", "▫" },
-						checkboxes = {
-							["[ ]"] = "󰄱", -- unchecked
-							["[x]"] = "", -- checked
-							["[-]"] = "󰦖", -- partially checked
-						},
-						quote = "┃", -- for normal blockquotes
-						callouts = {
-							["note"] = { icon = "📝", color = "Hint" },
-							["abstract"] = { icon = "📄", color = "String" },
-							["info"] = { icon = "ℹ️", color = "Special" },
-							["tip"] = { icon = "💡", color = "Number" },
-							["success"] = { icon = "✔️", color = "DiffAdd" },
-							["question"] = { icon = "❓", color = "DiagnosticInfo" },
-							["warning"] = { icon = "⚠️", color = "WarningMsg" },
-							["failure"] = { icon = "❌", color = "Error" },
-							["danger"] = { icon = "🔥", color = "ErrorMsg" },
-							["bug"] = { icon = "🐛", color = "DiagnosticError" },
-							["example"] = { icon = "📌", color = "Identifier" },
-							["quote"] = { icon = "❝", color = "Comment" },
-						},
-						conceal = true,
-					})
-				end,
-			},
+			-- Markdown prettifier with callouts
+			-- {
+			-- 	"MeanderingProgrammer/render-markdown.nvim",
+			-- 	config = function()
+			-- 		require("render-markdown").setup({
+			-- 			conceal = true,
+			-- 			callouts = {
+			-- 				["note"] = { icon = "📝", color = "Normal" },
+			-- 				["tip"] = { icon = "💡", color = "Special" },
+			-- 				["info"] = { icon = "ℹ️", color = "Special" },
+			-- 				["success"] = { icon = "✔️", color = "DiffAdd" },
+			-- 				["question"] = { icon = "❓", color = "DiagnosticInfo" },
+			-- 				["warning"] = { icon = "⚠️", color = "WarningMsg" },
+			-- 				["failure"] = { icon = "❌", color = "Error" },
+			-- 				["danger"] = { icon = "🔥", color = "ErrorMsg" },
+			-- 				["bug"] = { icon = "🐛", color = "DiagnosticError" },
+			-- 				["example"] = { icon = "📌", color = "Identifier" },
+			-- 				["quote"] = { icon = "❝", color = "Comment" },
+			-- 			},
+			-- 			bullets = { "•", "◦", "▪", "▫" },
+			-- 			checkboxes = {
+			-- 				["[ ]"] = "󰄱",
+			-- 				["[x]"] = "",
+			-- 				["[-]"] = "󰦖",
+			-- 			},
+			-- 			quote = "┃",
+			-- 			headings = { "▍", "▌", "▋", "▊", "▉", "█" },
+			-- 		})
+			--
+			-- 		vim.opt.conceallevel = 3
+			-- 		vim.opt.concealcursor = "nciv"
+			-- 	end,
+			-- },
 		},
 		opts = {
 			workspaces = {
