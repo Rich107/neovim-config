@@ -1,4 +1,4 @@
-if not vim.env.DEVPOD then
+if not vim.env.HOME == "/Users/richardellison" then
 	vim.notify("We are Running on the host")
 	return {
 		"christoomey/vim-tmux-navigator",
