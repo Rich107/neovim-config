@@ -3,7 +3,6 @@ return {
 	dependencies = {
 		"preservim/vimux",
 	},
-	-- TODO: only enable this when not inside a container
 	config = function()
 		vim.keymap.set(
 			"n",
@@ -18,12 +17,16 @@ return {
 		vim.cmd("let test#strategy = 'vimux'")
 		vim.cmd("let test#python#runner = 'pytest'")
 
-		-- This is working for PA-Leaderboard app
-		-- vim.cmd("let test#python#pytest#executable='docker compose exec rest-api pytest --disable-warnings -vv '")
-
 		-- This is working for Legl app (python only)
-		vim.cmd([[
-		        let g:test#python#pytest#executable = 'docker compose exec server pytest --disable-warnings -vv --create-db'
-		        ]])
+
+		if not vim.env.HOME == "/Users/richardellison" and vim.env.PROJECT_ID == "live-personal-pa-leaderboard" then
+			vim.cmd("let g:test#python#pytest#executable='docker compose exec rest-api pytest --disable-warnings -vv '")
+		elseif not vim.env.HOME == "/Users/richardellison" then
+			vim.cmd([[
+                    let g:test#python#pytest#executable = 'docker compose exec server pytest --disable-warnings -vv --create-db'
+                    ]])
+		else
+			vim.cmd("let g:test#python#pytest#executable='docker compose exec rest-api pytest --disable-warnings -vv '")
+		end
 	end,
 }
