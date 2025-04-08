@@ -22,6 +22,8 @@ return {
 			},
 
 			-- Markdown prettifier with callouts
+			-- Its working better without this just without the cool call outs.
+			-- Basic bullets were not working with this on and check boxes etc without it checks are working better
 			-- {
 			-- 	"MeanderingProgrammer/render-markdown.nvim",
 			-- 	config = function()
