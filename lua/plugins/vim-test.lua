@@ -17,7 +17,7 @@ return {
 		if vim.env.HOME == "/Users/richardellison" then
 			vim.cmd("let test#strategy = 'vimux'")
 		else
-			vim.cmd("let test#strategy = 'nvim'")
+			vim.cmd("let test#strategy = 'neovim'")
 		end
 		vim.cmd("let test#python#runner = 'pytest'")
 
