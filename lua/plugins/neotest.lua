@@ -31,9 +31,6 @@ return {
                     -- Runner to use. Will use pytest if available by default.
                     -- Can be a function to return dynamic value.
                     -- runner = "docker compose exec rest-api pytest",
-                    -- runner = function()
-                    -- 	return { "docker", "compose", "exec", "rest-api", "pytest" }
-                    -- end,
                     -- Custom python path for the runner.
                     -- Can be a string or a list of strings.
                     -- Can also be a function to return dynamic value.
