@@ -15,7 +15,7 @@ return {
 		config = function()
 			require("mason-lspconfig").setup({
 				ensure_installed = {
-					-- "tsserver",
+					"ts_ls",
 					-- "typescript-language-server",
 					"html",
 					"tailwindcss",
@@ -121,10 +121,10 @@ return {
 					require("lspconfig").volar.setup({
 						-- NOTE: Uncomment to enable volar in file types other than vue.
 						-- (Similar to Takeover Mode)
-						-- IMPORTANT: Make sure tsserver has a tsserver.config.json and tsserver.json file for your project!
+						-- IMPORTANT: Make sure ts_ls has a ts_ls.config.json and ts_ls.json file for your project!
 						-- filetypes = { "vue", "javascript", "typescript", "javascriptreact", "typescriptreact", "json" },
 
-						-- NOTE: Uncomment to restrict Volar to only Vue/Nuxt projects. This will enable Volar to work alongside other language servers (tsserver).
+						-- NOTE: Uncomment to restrict Volar to only Vue/Nuxt projects. This will enable Volar to work alongside other language servers (ts_ls).
 
 						-- root_dir = require("lspconfig").util.root_pattern(
 						--   "vue.config.js",
@@ -166,11 +166,11 @@ return {
 						},
 					})
 				end,
-				["tsserver"] = function()
+				["ts_ls"] = function()
 					local mason_packages = vim.fn.stdpath("data") .. "/mason/packages"
 					local volar_path = mason_packages .. "/vue-language-server/node_modules/@vue/language-server"
 
-					require("lspconfig").tsserver.setup({
+					require("lspconfig").ts_ls.setup({
 						-- NOTE: To enable hybridMode, change HybrideMode to true above and uncomment the following filetypes block.
 
 						-- filetypes = { "typescript", "javascript", "javascriptreact", "typescriptreact", "vue" },
