@@ -8,7 +8,7 @@ return {
 				auto_install = true,
 				highlight = { enable = true },
 				indent = { enable = true },
-				ensure_installed = { "vue", "scss", "css", "html", "javascript", "python" },
+				ensure_installed = { "vue", "scss", "css", "html", "javascript", "python", "typescript" },
 				-- Configuring the textobjects module
 				textobjects = {
 					select = {
