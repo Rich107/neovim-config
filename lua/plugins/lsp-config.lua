@@ -47,6 +47,7 @@ return {
             -- Set up capabilities for cmp-nvim-lsp
             local capabilities = cmp_nvim_lsp.default_capabilities()
             capabilities.offsetEncoding = { "utf-8" }
+            capabilities.positionEncodings = { "utf-8" }
 
             -- Automatically set up LSP servers installed via mason-lspconfig
             mason_lspconfig.setup_handlers({
