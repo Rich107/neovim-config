@@ -207,6 +207,7 @@ keymap.set("n", "<leader>sg", "zg", { desc = "Add word under cursor to spelling 
 keymap.set("n", "<leader>sb", "zw", { desc = "Add word under cursor to wrong spelling list" })
 
 keymap.set("n", "<leader>ch", "<cmd>TSBufToggle highlight<CR>", { desc = "Toggles spellchecker" })
+keymap.set("n", "<leader>cpc", "<cmd>CopilotChatToggle<CR>", { desc = "Toggles AI Chat Window" })
 
 -- use jk to exit insert mode
 keymap.set("i", "jk", "<ESC>", { desc = "Exit insert mode with jk" })
