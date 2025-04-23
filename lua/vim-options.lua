@@ -11,6 +11,10 @@ vim.o.wrap = false
 
 vim.opt.swapfile = false
 
+-- This stops unreachable from being greyed out
+-- pyright is not that great figuring out when to do this.
+vim.api.nvim_set_hl(0, "@lsp.type.unreachable", { link = "Normal" })
+
 -- This allows copy paste to work in ssh connections:
 local osc52 = require("vim.ui.clipboard.osc52")
 
