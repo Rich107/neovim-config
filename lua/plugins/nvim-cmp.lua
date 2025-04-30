@@ -11,10 +11,11 @@ return {
             -- install jsregexp (optional!).
             build = "make install_jsregexp",
         },
-        "saadparwaiz1/cmp_luasnip", -- for autocompletion
-        "neovim/nvim-lspconfig",  -- for autocompletion
-        "rafamadriz/friendly-snippets", -- useful snippets
-        "onsails/lspkind.nvim",   -- vs-code like pictograms
+        "saadparwaiz1/cmp_luasnip",      -- for autocompletion
+        "neovim/nvim-lspconfig",         -- for autocompletion
+        "rafamadriz/friendly-snippets",  -- useful snippets
+        "onsails/lspkind.nvim",          -- vs-code like pictograms
+        "hrsh7th/cmp-nvim-lsp-signature-help", -- helps fill in function parameters
     },
     config = function()
         local cmp = require("cmp")
@@ -23,6 +24,12 @@ return {
         local cmp_nvim_lsp = require("cmp_nvim_lsp")
 
         require("luasnip.loaders.from_vscode").lazy_load()
+
+        require("cmp").setup({
+            sources = {
+                { name = "nvim_lsp_signature_help" },
+            },
+        })
 
         -- Set up completion capabilities for LSP servers
         local capabilities = cmp_nvim_lsp.default_capabilities()
