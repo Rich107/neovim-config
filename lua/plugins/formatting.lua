@@ -36,18 +36,18 @@ return {
 		-- })
 
 		-- Map <leader>ff to format JSON with Prettier
-		vim.keymap.set("n", "<leader>ff", function()
-			local filetype = vim.bo.filetype
-			if filetype == "json" then
-				vim.cmd("%!prettier --stdin-filepath %")
-			else
-				conform.format({
-					lsp_fallback = true,
-					async = false,
-					timeout_ms = 1000,
-				})
-			end
-		end, { desc = "Format JSON with Prettier or use Conform for other filetypes" })
+		-- vim.keymap.set("n", "<leader>ff", function()
+		-- local filetype = vim.bo.filetype
+		-- if filetype == "json" then
+		-- 	vim.cmd("%!prettier --stdin-filepath %")
+		-- else
+		-- 	conform.format({
+		-- 		lsp_fallback = true,
+		-- 		async = false,
+		-- 		timeout_ms = 1000,
+		-- 	})
+		-- end
+		-- end, { desc = "Format JSON with Prettier or use Conform for other filetypes" })
 
 		vim.keymap.set({ "n", "v" }, "<leader>mp", function()
 			conform.format({
