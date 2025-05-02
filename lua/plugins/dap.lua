@@ -76,11 +76,10 @@ return {
                 end,
             },
         }
-
-        vim.keymap.set("n", "<leader>dt", dap.toggle_breakpoint, { desc = "Toggle Breakpoint" })
-        vim.keymap.set("n", "<leader>dc", dap.continue, { desc = "Continue" })
-
-        vim.keymap.set("n", "dr", function()
+        vim.keymap.set("n", "<leader>db", dap.toggle_breakpoint, { desc = "DAP Toggle Breakpoint" })
+        vim.keymap.set("n", "<leader>dc", dap.continue, { desc = "DAP Continue" })
+        vim.keymap.set("n", "<leader>dt", dap.terminate, { desc = "Close Debugger" })
+        vim.keymap.set("n", "<leader>dr", function()
             require("neotest").run.run({ strategy = "dap" })
         end, { desc = "Run tests in debug mode" })
 
