@@ -23,6 +23,12 @@ vim.fn.sign_define("DapBreakpoint", {
     numhl = "",
 })
 
+vim.fn.sign_define("DapStopped", {
+    text = "👉️",
+    texthl = "",
+    linehl = "",
+    numhl = "",
+})
 -- This stops unreachable from being greyed out
 -- pyright is not that great figuring out when to do this.
 -- vim.api.nvim_set_hl(0, "@lsp.type.unreachable", { link = "Normal" })
@@ -318,4 +324,5 @@ vim.api.nvim_set_keymap("n", "<C-u>", "<C-u>zz", { noremap = true, silent = true
 -- -- Set signcolumn to always show and limit to 1 char so stuff doesn't move when LSP error occurs
 -- vim.wo.signcolumn = "yes:1"
 -- -- Configure statuscolumn
+-- vim.o.statuscolumn = "%C%s%#Status_LineNr#%3.3l%* %-2.2r%#Status_DivLine#⏐%*"
 -- vim.o.statuscolumn = "%C%s%#Status_LineNr#%3.3l%* %-2.2r%#Status_DivLine#⏐%*"
