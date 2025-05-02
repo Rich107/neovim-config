@@ -24,7 +24,7 @@ vim.fn.sign_define("DapBreakpoint", {
 })
 
 vim.fn.sign_define("DapStopped", {
-    text = "👉️",
+    text = "🫠️",
     texthl = "",
     linehl = "",
     numhl = "",
