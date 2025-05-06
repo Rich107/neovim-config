@@ -2,6 +2,7 @@ return {
     "hrsh7th/nvim-cmp",
     event = "InsertEnter",
     dependencies = {
+        "hrsh7th/cmp-nvim-lsp",
         "hrsh7th/cmp-buffer", -- source for text in buffer
         "hrsh7th/cmp-path", -- source for file system paths
         {
@@ -25,7 +26,7 @@ return {
 
         require("luasnip.loaders.from_vscode").lazy_load()
 
-        require("cmp").setup({
+        cmp.setup({
             sources = {
                 { name = "nvim_lsp_signature_help" },
             },
@@ -66,6 +67,12 @@ return {
                     maxwidth = 50,
                     ellipsis_char = "...",
                 }),
+            },
+        })
+        cmp.setup.filetype("sql", {
+            sources = {
+                { name = "vim-dadbod-completion" },
+                { name = "buffer" },
             },
         })
     end,
