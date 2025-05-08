@@ -10,24 +10,24 @@ local keymap = vim.keymap -- for conciseness
 vim.o.wrap = false
 
 vim.diagnostic.config({
-	virtual_text = true,
+    virtual_text = true,
 })
 
 vim.opt.swapfile = false
 
 -- Makes breakpoingts clearer
 vim.fn.sign_define("DapBreakpoint", {
-	text = "🛑",
-	texthl = "",
-	linehl = "",
-	numhl = "",
+    text = "🛑",
+    texthl = "",
+    linehl = "",
+    numhl = "",
 })
 
 vim.fn.sign_define("DapStopped", {
-	text = "🫠️",
-	texthl = "",
-	linehl = "",
-	numhl = "",
+    text = "🫠️",
+    texthl = "",
+    linehl = "",
+    numhl = "",
 })
 -- This stops unreachable from being greyed out
 -- pyright is not that great figuring out when to do this.
@@ -37,168 +37,168 @@ vim.fn.sign_define("DapStopped", {
 local osc52 = require("vim.ui.clipboard.osc52")
 
 vim.api.nvim_create_autocmd({ "BufEnter", "TextChanged", "InsertLeave" }, {
-	pattern = "*.vue",
-	callback = function()
-		local html_tags = {
-			"html",
-			"head",
-			"title",
-			"base",
-			"link",
-			"meta",
-			"style",
-			"script",
-			"noscript",
-			"body",
-			"section",
-			"nav",
-			"article",
-			"aside",
-			"h1",
-			"h2",
-			"h3",
-			"h4",
-			"h5",
-			"h6",
-			"header",
-			"footer",
-			"address",
-			"main",
-			"p",
-			"hr",
-			"pre",
-			"blockquote",
-			"ol",
-			"ul",
-			"li",
-			"dl",
-			"dt",
-			"dd",
-			"figure",
-			"figcaption",
-			"div",
-			"a",
-			"em",
-			"strong",
-			"small",
-			"s",
-			"cite",
-			"q",
-			"dfn",
-			"abbr",
-			"data",
-			"time",
-			"code",
-			"var",
-			"samp",
-			"kbd",
-			"sub",
-			"sup",
-			"i",
-			"b",
-			"u",
-			"mark",
-			"ruby",
-			"rt",
-			"rp",
-			"bdi",
-			"bdo",
-			"span",
-			"br",
-			"wbr",
-			"ins",
-			"del",
-			"img",
-			"iframe",
-			"embed",
-			"object",
-			"param",
-			"video",
-			"audio",
-			"source",
-			"track",
-			"canvas",
-			"map",
-			"area",
-			"svg",
-			"math",
-			"table",
-			"caption",
-			"colgroup",
-			"col",
-			"tbody",
-			"thead",
-			"tfoot",
-			"tr",
-			"td",
-			"th",
-			"form",
-			"fieldset",
-			"legend",
-			"label",
-			"input",
-			"button",
-			"select",
-			"datalist",
-			"optgroup",
-			"option",
-			"textarea",
-			"output",
-			"progress",
-			"meter",
-			"details",
-			"summary",
-			"dialog",
-			"script",
-			"template",
-			"slot",
-		}
-		local html_tag_lookup = {}
-		for _, tag in ipairs(html_tags) do
-			html_tag_lookup[tag] = true
-		end
+    pattern = "*.vue",
+    callback = function()
+        local html_tags = {
+            "html",
+            "head",
+            "title",
+            "base",
+            "link",
+            "meta",
+            "style",
+            "script",
+            "noscript",
+            "body",
+            "section",
+            "nav",
+            "article",
+            "aside",
+            "h1",
+            "h2",
+            "h3",
+            "h4",
+            "h5",
+            "h6",
+            "header",
+            "footer",
+            "address",
+            "main",
+            "p",
+            "hr",
+            "pre",
+            "blockquote",
+            "ol",
+            "ul",
+            "li",
+            "dl",
+            "dt",
+            "dd",
+            "figure",
+            "figcaption",
+            "div",
+            "a",
+            "em",
+            "strong",
+            "small",
+            "s",
+            "cite",
+            "q",
+            "dfn",
+            "abbr",
+            "data",
+            "time",
+            "code",
+            "var",
+            "samp",
+            "kbd",
+            "sub",
+            "sup",
+            "i",
+            "b",
+            "u",
+            "mark",
+            "ruby",
+            "rt",
+            "rp",
+            "bdi",
+            "bdo",
+            "span",
+            "br",
+            "wbr",
+            "ins",
+            "del",
+            "img",
+            "iframe",
+            "embed",
+            "object",
+            "param",
+            "video",
+            "audio",
+            "source",
+            "track",
+            "canvas",
+            "map",
+            "area",
+            "svg",
+            "math",
+            "table",
+            "caption",
+            "colgroup",
+            "col",
+            "tbody",
+            "thead",
+            "tfoot",
+            "tr",
+            "td",
+            "th",
+            "form",
+            "fieldset",
+            "legend",
+            "label",
+            "input",
+            "button",
+            "select",
+            "datalist",
+            "optgroup",
+            "option",
+            "textarea",
+            "output",
+            "progress",
+            "meter",
+            "details",
+            "summary",
+            "dialog",
+            "script",
+            "template",
+            "slot",
+        }
+        local html_tag_lookup = {}
+        for _, tag in ipairs(html_tags) do
+            html_tag_lookup[tag] = true
+        end
 
-		local bufnr = vim.api.nvim_get_current_buf()
-		local ns = vim.api.nvim_create_namespace("custom-tag-highlighter")
-		vim.api.nvim_buf_clear_namespace(bufnr, ns, 0, -1)
+        local bufnr = vim.api.nvim_get_current_buf()
+        local ns = vim.api.nvim_create_namespace("custom-tag-highlighter")
+        vim.api.nvim_buf_clear_namespace(bufnr, ns, 0, -1)
 
-		local parser = vim.treesitter.get_parser(bufnr, "vue")
-		local tree = parser:parse()[1]
-		local root = tree:root()
+        local parser = vim.treesitter.get_parser(bufnr, "vue")
+        local tree = parser:parse()[1]
+        local root = tree:root()
 
-		local query = vim.treesitter.query.parse(
-			"vue",
-			[[
+        local query = vim.treesitter.query.parse(
+            "vue",
+            [[
                   (element
                   (start_tag (tag_name) @tag_name)
                   (end_tag (tag_name) @closing_tag_name)?)
             ]]
-		)
-		for id, node in query:iter_captures(root, bufnr, 0, -1) do
-			local capture_name = query.captures[id]
-			local tag = vim.treesitter.get_node_text(node, bufnr)
+        )
+        for id, node in query:iter_captures(root, bufnr, 0, -1) do
+            local capture_name = query.captures[id]
+            local tag = vim.treesitter.get_node_text(node, bufnr)
 
-			if not html_tag_lookup[tag] and (capture_name == "tag_name" or capture_name == "closing_tag_name") then
-				local row, col, _, end_col = node:range()
-				vim.api.nvim_buf_add_highlight(bufnr, ns, "CustomTagName", row, col, end_col)
-			end
-		end
-	end,
+            if not html_tag_lookup[tag] and (capture_name == "tag_name" or capture_name == "closing_tag_name") then
+                local row, col, _, end_col = node:range()
+                vim.api.nvim_buf_add_highlight(bufnr, ns, "CustomTagName", row, col, end_col)
+            end
+        end
+    end,
 })
 
 vim.api.nvim_set_hl(0, "CustomTagName", { fg = "#f48a9f", bold = true })
 
 -- This allows copy paste to work in ssh connections:
 vim.g.clipboard = {
-	name = "OSC 52",
-	copy = {
-		["+"] = osc52.copy("+"),
-		["*"] = osc52.copy("*"),
-	},
-	paste = {
-		["+"] = osc52.paste("+"),
-		["*"] = osc52.paste("*"),
-	},
+    name = "OSC 52",
+    copy = {
+        ["+"] = osc52.copy("+"),
+        ["*"] = osc52.copy("*"),
+    },
+    paste = {
+        ["+"] = osc52.paste("+"),
+        ["*"] = osc52.paste("*"),
+    },
 }
 
 -- Alt key will not let me type # it types £ instead
@@ -218,7 +218,7 @@ keymap.set("v", "<leader>y", '"+y', { desc = "yank to buffer" })
 
 -- line numbers
 vim.opt.relativenumber = true -- show relative line numbers
-vim.opt.number = true -- shows absolute line number on cursor line (when relative number is on)
+vim.opt.number = true         -- shows absolute line number on cursor line (when relative number is on)
 
 -- go to url:
 vim.keymap.set("n", "gx", "<esc>:URLOpenUnderCursor<cr>")
@@ -255,7 +255,7 @@ keymap.set({ "n", "i" }, "<right>", "<nop>")
 
 -- faster movments with capitals:
 keymap.set({ "o", "v", "n" }, "H", "^", { desc = "Move Left super fast" })
-keymap.set({ "o", "v", "n" }, "L", "$", { desc = "Move Right super fast" }) -- Move to end of line
+keymap.set({ "o", "v", "n" }, "L", "$", { desc = "Move Right super fast" })              -- Move to end of line
 keymap.set({ "o", "v", "n" }, "J", "}", { desc = "Move Down One Paragraph Super Fast" }) -- Move to next paragraph up
 keymap.set({ "o", "v", "n" }, "K", "{", { desc = "Move Up One Paragraph Super Fast" })
 
@@ -264,10 +264,10 @@ keymap.set("n", "<leader>h", "<C-o>", { desc = "Jump back in history" })
 keymap.set("n", "<leader>l", "<C-i>", { desc = "Jump back in history" })
 
 -- window management
-keymap.set("n", "<leader>wv", "<C-w>v", { desc = "Split window vertically" }) -- split window vertically
-keymap.set("n", "<leader>wh", "<C-w>s", { desc = "Split window horizontally" }) -- split window horizontally
-keymap.set("n", "<leader>we", "<C-w>=", { desc = "Make splits equal size" }) -- make split windows equal width & height
-keymap.set("n", "<leader>wx", "<cmd>close<CR>", { desc = "Close current split" }) -- close current split window
+keymap.set("n", "<leader>wv", "<C-w>v", { desc = "Split window vertically" })                -- split window vertically
+keymap.set("n", "<leader>wh", "<C-w>s", { desc = "Split window horizontally" })              -- split window horizontally
+keymap.set("n", "<leader>we", "<C-w>=", { desc = "Make splits equal size" })                 -- make split windows equal width & height
+keymap.set("n", "<leader>wx", "<cmd>close<CR>", { desc = "Close current split" })            -- close current split window
 keymap.set("n", "<leader>wo", "<cmd>only<CR>", { desc = "Close all but the current split" }) -- close current split window
 
 -- Moving Lines up and down
@@ -280,25 +280,25 @@ keymap.set("n", "<leader>qw", "<cmd>wq<CR>", { desc = "Save and Close" })
 
 -- Highlight text when yanking
 vim.api.nvim_create_autocmd("TextYankPost", {
-	desc = "Highlight when yanking (copying) text",
-	group = vim.api.nvim_create_augroup("kickstart-highlight-yank", { clear = true }),
-	callback = function()
-		vim.highlight.on_yank()
-	end,
+    desc = "Highlight when yanking (copying) text",
+    group = vim.api.nvim_create_augroup("kickstart-highlight-yank", { clear = true }),
+    callback = function()
+        vim.highlight.on_yank()
+    end,
 })
 
 vim.api.nvim_create_autocmd("BufWritePre", {
-	pattern = "*.py",
-	callback = function()
-		local bufnr = vim.api.nvim_get_current_buf()
-		local content = vim.api.nvim_buf_get_lines(bufnr, 0, -1, false)
-		local result = vim.system({ "ruff", "format", "-" }, { stdin = table.concat(content, "\n") }):wait()
+    pattern = "*.py",
+    callback = function()
+        local bufnr = vim.api.nvim_get_current_buf()
+        local content = vim.api.nvim_buf_get_lines(bufnr, 0, -1, false)
+        local result = vim.system({ "ruff", "format", "-" }, { stdin = table.concat(content, "\n") }):wait()
 
-		if result.code == 0 then
-			local formatted = vim.split(result.stdout, "\n")
-			vim.api.nvim_buf_set_lines(bufnr, 0, -1, false, formatted)
-		end
-	end,
+        if result.code == 0 then
+            local formatted = vim.split(result.stdout, "\n")
+            vim.api.nvim_buf_set_lines(bufnr, 0, -1, false, formatted)
+        end
+    end,
 })
 
 vim.keymap.set("n", "<leader>gdo", "<cmd>DiffviewOpen<CR>", { silent = true, desc = "Diff Split Open" })
@@ -313,24 +313,7 @@ vim.api.nvim_set_hl(0, "LineNr", { fg = "white", bold = true })
 vim.api.nvim_set_hl(0, "LineNrBelow", { fg = "#FB508F", bold = true })
 
 vim.wo.cursorline = true
-vim.api.nvim_set_hl(0, "CursorLine", { bg = "#f0f0f0" }) -- Adjust color to suit your theme
+vim.api.nvim_set_hl(0, "CursorLine", { bg = "#f0f0f0" })                -- Adjust color to suit your theme
 vim.api.nvim_set_hl(0, "CursorLineNr", { fg = "#000000", bold = true }) -- Make line number bold and visible
 
--- -- Set highlight colors (overridden by colorscheme, hence after)-- vim.api.nvim_set_hl(0, "LineNr", { fg = "#6c7086" })
--- vim.api.nvim_set_hl(0, "CursorLineNr", { fg = "#cdd6f4" }) -- bg = "#313244"
--- vim.api.nvim_set_hl(0, "LineNrAbove", { fg = "#eba0ac" })
--- vim.api.nvim_set_hl(0, "LineNrBelow", { fg = "#94e2d5" })
--- -- Set line number to be a bit darker
--- vim.api.nvim_set_hl(0, "Status_LineNr", { fg = "#6c7086" })
--- -- Color background the same as normal but color text light grey, use 'Vertical Line Extension' ⏐ unicode U+23D0
--- vim.api.nvim_set_hl(0, "Status_DivLine", { bg = "#1e1e2e", fg = "#313244" })
--- -- Set number and relativenumber options
--- vim.wo.number = true
--- vim.wo.relativenumber = true
--- -- Highlight current line, to hide and only use number highlight uncomment " set cursorlineopt
--- vim.wo.cursorline = true
--- -- Set signcolumn to always show and limit to 1 char so stuff doesn't move when LSP error occurs
--- vim.wo.signcolumn = "yes:1"
--- -- Configure statuscolumn
--- vim.o.statuscolumn = "%C%s%#Status_LineNr#%3.3l%* %-2.2r%#Status_DivLine#⏐%*"
--- vim.o.statuscolumn = "%C%s%#Status_LineNr#%3.3l%* %-2.2r%#Status_DivLine#⏐%*"
+vim.api.nvim_set_keymap("n", "<leader>Log", ":lua log_variable()<CR>", { noremap = true, silent = true })
