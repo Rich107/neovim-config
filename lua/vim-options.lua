@@ -315,5 +315,3 @@ vim.api.nvim_set_hl(0, "LineNrBelow", { fg = "#FB508F", bold = true })
 vim.wo.cursorline = true
 vim.api.nvim_set_hl(0, "CursorLine", { bg = "#f0f0f0" })                -- Adjust color to suit your theme
 vim.api.nvim_set_hl(0, "CursorLineNr", { fg = "#000000", bold = true }) -- Make line number bold and visible
-
-vim.api.nvim_set_keymap("n", "<leader>Log", ":lua log_variable()<CR>", { noremap = true, silent = true })
