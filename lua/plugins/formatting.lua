@@ -13,6 +13,7 @@ return {
 				svelte = { "biome" },
 				css = { "biome" },
 				html = { "biome" },
+				django = { "djhmtl" },
 				json = { "biome" },
 				yaml = { "biome" },
 				markdown = { "biome" },
