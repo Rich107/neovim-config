@@ -287,20 +287,6 @@ vim.api.nvim_create_autocmd("TextYankPost", {
     end,
 })
 
-vim.api.nvim_create_autocmd("BufWritePre", {
-    pattern = "*.py",
-    callback = function()
-        local bufnr = vim.api.nvim_get_current_buf()
-        local content = vim.api.nvim_buf_get_lines(bufnr, 0, -1, false)
-        local result = vim.system({ "ruff", "format", "-" }, { stdin = table.concat(content, "\n") }):wait()
-
-        if result.code == 0 then
-            local formatted = vim.split(result.stdout, "\n")
-            vim.api.nvim_buf_set_lines(bufnr, 0, -1, false, formatted)
-        end
-    end,
-})
-
 vim.keymap.set("n", "<leader>gdo", "<cmd>DiffviewOpen<CR>", { silent = true, desc = "Diff Split Open" })
 vim.keymap.set("n", "<leader>gdc", "<cmd>DiffviewClose<CR>", { silent = true, desc = "Diff Split Close" })
 vim.keymap.set("n", "<leader>gds", "<cmd>Gdiffsplit!<CR>", { silent = true, desc = "Git Diff Split" })
