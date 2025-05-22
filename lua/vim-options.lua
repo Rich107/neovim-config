@@ -1,18 +1,24 @@
-vim.cmd("set expandtab") vim.cmd("set tabstop=4") vim.cmd("set softtabstop=4") vim.cmd("set shiftwidth=4") vim.g.mapleader = " " vim.g.background = "light"
-local keymap = vim.keymap -- for conciseness vim.o.wrap = false vim.diagnostic.config({ virtual_text = true, }) vim.opt.swapfile = false
+vim.cmd("set expandtab")
+vim.cmd("set tabstop=4")
+vim.cmd("set softtabstop=4")
+vim.cmd("set shiftwidth=4")
+vim.g.mapleader = " "
+vim.g.background = "light"
+local keymap = vim
+.keymap                   -- for conciseness vim.o.wrap = false vim.diagnostic.config({ virtual_text = true, }) vim.opt.swapfile = false
 -- Makes breakpoingts clearer
 vim.fn.sign_define("DapBreakpoint", {
-	text = "🛑",
-	texthl = "",
-	linehl = "",
-	numhl = "",
+    text = "🛑",
+    texthl = "",
+    linehl = "",
+    numhl = "",
 })
 
 vim.fn.sign_define("DapStopped", {
-	text = "🫠️",
-	texthl = "",
-	linehl = "",
-	numhl = "",
+    text = "🫠️",
+    texthl = "",
+    linehl = "",
+    numhl = "",
 })
 -- This stops unreachable from being greyed out
 -- pyright is not that great figuring out when to do this.
@@ -22,168 +28,168 @@ vim.fn.sign_define("DapStopped", {
 local osc52 = require("vim.ui.clipboard.osc52")
 
 vim.api.nvim_create_autocmd({ "BufEnter", "TextChanged", "InsertLeave" }, {
-	pattern = "*.vue",
-	callback = function()
-		local html_tags = {
-			"html",
-			"head",
-			"title",
-			"base",
-			"link",
-			"meta",
-			"style",
-			"script",
-			"noscript",
-			"body",
-			"section",
-			"nav",
-			"article",
-			"aside",
-			"h1",
-			"h2",
-			"h3",
-			"h4",
-			"h5",
-			"h6",
-			"header",
-			"footer",
-			"address",
-			"main",
-			"p",
-			"hr",
-			"pre",
-			"blockquote",
-			"ol",
-			"ul",
-			"li",
-			"dl",
-			"dt",
-			"dd",
-			"figure",
-			"figcaption",
-			"div",
-			"a",
-			"em",
-			"strong",
-			"small",
-			"s",
-			"cite",
-			"q",
-			"dfn",
-			"abbr",
-			"data",
-			"time",
-			"code",
-			"var",
-			"samp",
-			"kbd",
-			"sub",
-			"sup",
-			"i",
-			"b",
-			"u",
-			"mark",
-			"ruby",
-			"rt",
-			"rp",
-			"bdi",
-			"bdo",
-			"span",
-			"br",
-			"wbr",
-			"ins",
-			"del",
-			"img",
-			"iframe",
-			"embed",
-			"object",
-			"param",
-			"video",
-			"audio",
-			"source",
-			"track",
-			"canvas",
-			"map",
-			"area",
-			"svg",
-			"math",
-			"table",
-			"caption",
-			"colgroup",
-			"col",
-			"tbody",
-			"thead",
-			"tfoot",
-			"tr",
-			"td",
-			"th",
-			"form",
-			"fieldset",
-			"legend",
-			"label",
-			"input",
-			"button",
-			"select",
-			"datalist",
-			"optgroup",
-			"option",
-			"textarea",
-			"output",
-			"progress",
-			"meter",
-			"details",
-			"summary",
-			"dialog",
-			"script",
-			"template",
-			"slot",
-		}
-		local html_tag_lookup = {}
-		for _, tag in ipairs(html_tags) do
-			html_tag_lookup[tag] = true
-		end
+    pattern = "*.vue",
+    callback = function()
+        local html_tags = {
+            "html",
+            "head",
+            "title",
+            "base",
+            "link",
+            "meta",
+            "style",
+            "script",
+            "noscript",
+            "body",
+            "section",
+            "nav",
+            "article",
+            "aside",
+            "h1",
+            "h2",
+            "h3",
+            "h4",
+            "h5",
+            "h6",
+            "header",
+            "footer",
+            "address",
+            "main",
+            "p",
+            "hr",
+            "pre",
+            "blockquote",
+            "ol",
+            "ul",
+            "li",
+            "dl",
+            "dt",
+            "dd",
+            "figure",
+            "figcaption",
+            "div",
+            "a",
+            "em",
+            "strong",
+            "small",
+            "s",
+            "cite",
+            "q",
+            "dfn",
+            "abbr",
+            "data",
+            "time",
+            "code",
+            "var",
+            "samp",
+            "kbd",
+            "sub",
+            "sup",
+            "i",
+            "b",
+            "u",
+            "mark",
+            "ruby",
+            "rt",
+            "rp",
+            "bdi",
+            "bdo",
+            "span",
+            "br",
+            "wbr",
+            "ins",
+            "del",
+            "img",
+            "iframe",
+            "embed",
+            "object",
+            "param",
+            "video",
+            "audio",
+            "source",
+            "track",
+            "canvas",
+            "map",
+            "area",
+            "svg",
+            "math",
+            "table",
+            "caption",
+            "colgroup",
+            "col",
+            "tbody",
+            "thead",
+            "tfoot",
+            "tr",
+            "td",
+            "th",
+            "form",
+            "fieldset",
+            "legend",
+            "label",
+            "input",
+            "button",
+            "select",
+            "datalist",
+            "optgroup",
+            "option",
+            "textarea",
+            "output",
+            "progress",
+            "meter",
+            "details",
+            "summary",
+            "dialog",
+            "script",
+            "template",
+            "slot",
+        }
+        local html_tag_lookup = {}
+        for _, tag in ipairs(html_tags) do
+            html_tag_lookup[tag] = true
+        end
 
-		local bufnr = vim.api.nvim_get_current_buf()
-		local ns = vim.api.nvim_create_namespace("custom-tag-highlighter")
-		vim.api.nvim_buf_clear_namespace(bufnr, ns, 0, -1)
+        local bufnr = vim.api.nvim_get_current_buf()
+        local ns = vim.api.nvim_create_namespace("custom-tag-highlighter")
+        vim.api.nvim_buf_clear_namespace(bufnr, ns, 0, -1)
 
-		local parser = vim.treesitter.get_parser(bufnr, "vue")
-		local tree = parser:parse()[1]
-		local root = tree:root()
+        local parser = vim.treesitter.get_parser(bufnr, "vue")
+        local tree = parser:parse()[1]
+        local root = tree:root()
 
-		local query = vim.treesitter.query.parse(
-			"vue",
-			[[
+        local query = vim.treesitter.query.parse(
+            "vue",
+            [[
                   (element
                   (start_tag (tag_name) @tag_name)
                   (end_tag (tag_name) @closing_tag_name)?)
             ]]
-		)
-		for id, node in query:iter_captures(root, bufnr, 0, -1) do
-			local capture_name = query.captures[id]
-			local tag = vim.treesitter.get_node_text(node, bufnr)
+        )
+        for id, node in query:iter_captures(root, bufnr, 0, -1) do
+            local capture_name = query.captures[id]
+            local tag = vim.treesitter.get_node_text(node, bufnr)
 
-			if not html_tag_lookup[tag] and (capture_name == "tag_name" or capture_name == "closing_tag_name") then
-				local row, col, _, end_col = node:range()
-				vim.api.nvim_buf_add_highlight(bufnr, ns, "CustomTagName", row, col, end_col)
-			end
-		end
-	end,
+            if not html_tag_lookup[tag] and (capture_name == "tag_name" or capture_name == "closing_tag_name") then
+                local row, col, _, end_col = node:range()
+                vim.api.nvim_buf_add_highlight(bufnr, ns, "CustomTagName", row, col, end_col)
+            end
+        end
+    end,
 })
 
 vim.api.nvim_set_hl(0, "CustomTagName", { fg = "#f48a9f", bold = true })
 
 -- This allows copy paste to work in ssh connections:
 vim.g.clipboard = {
-	name = "OSC 52",
-	copy = {
-		["+"] = osc52.copy("+"),
-		["*"] = osc52.copy("*"),
-	},
-	paste = {
-		["+"] = osc52.paste("+"),
-		["*"] = osc52.paste("*"),
-	},
+    name = "OSC 52",
+    copy = {
+        ["+"] = osc52.copy("+"),
+        ["*"] = osc52.copy("*"),
+    },
+    paste = {
+        ["+"] = osc52.paste("+"),
+        ["*"] = osc52.paste("*"),
+    },
 }
 
 -- Alt key will not let me type # it types £ instead
@@ -203,7 +209,7 @@ keymap.set("v", "<leader>y", '"+y', { desc = "yank to buffer" })
 
 -- line numbers
 vim.opt.relativenumber = true -- show relative line numbers
-vim.opt.number = true -- shows absolute line number on cursor line (when relative number is on)
+vim.opt.number = true         -- shows absolute line number on cursor line (when relative number is on)
 
 -- go to url:
 vim.keymap.set("n", "gx", "<esc>:URLOpenUnderCursor<cr>")
@@ -240,7 +246,7 @@ keymap.set({ "n", "i" }, "<right>", "<nop>")
 
 -- faster movments with capitals:
 keymap.set({ "o", "v", "n" }, "H", "^", { desc = "Move Left super fast" })
-keymap.set({ "o", "v", "n" }, "L", "$", { desc = "Move Right super fast" }) -- Move to end of line
+keymap.set({ "o", "v", "n" }, "L", "$", { desc = "Move Right super fast" })              -- Move to end of line
 keymap.set({ "o", "v", "n" }, "J", "}", { desc = "Move Down One Paragraph Super Fast" }) -- Move to next paragraph up
 keymap.set({ "o", "v", "n" }, "K", "{", { desc = "Move Up One Paragraph Super Fast" })
 
@@ -249,10 +255,10 @@ keymap.set("n", "<leader>h", "<C-o>", { desc = "Jump back in history" })
 keymap.set("n", "<leader>l", "<C-i>", { desc = "Jump back in history" })
 
 -- window management
-keymap.set("n", "<leader>wv", "<C-w>v", { desc = "Split window vertically" }) -- split window vertically
-keymap.set("n", "<leader>wh", "<C-w>s", { desc = "Split window horizontally" }) -- split window horizontally
-keymap.set("n", "<leader>we", "<C-w>=", { desc = "Make splits equal size" }) -- make split windows equal width & height
-keymap.set("n", "<leader>wx", "<cmd>close<CR>", { desc = "Close current split" }) -- close current split window
+keymap.set("n", "<leader>wv", "<C-w>v", { desc = "Split window vertically" })                -- split window vertically
+keymap.set("n", "<leader>wh", "<C-w>s", { desc = "Split window horizontally" })              -- split window horizontally
+keymap.set("n", "<leader>we", "<C-w>=", { desc = "Make splits equal size" })                 -- make split windows equal width & height
+keymap.set("n", "<leader>wx", "<cmd>close<CR>", { desc = "Close current split" })            -- close current split window
 keymap.set("n", "<leader>wo", "<cmd>only<CR>", { desc = "Close all but the current split" }) -- close current split window
 
 -- Moving Lines up and down
@@ -265,11 +271,11 @@ keymap.set("n", "<leader>qw", "<cmd>wq<CR>", { desc = "Save and Close" })
 
 -- Highlight text when yanking
 vim.api.nvim_create_autocmd("TextYankPost", {
-	desc = "Highlight when yanking (copying) text",
-	group = vim.api.nvim_create_augroup("kickstart-highlight-yank", { clear = true }),
-	callback = function()
-		vim.highlight.on_yank()
-	end,
+    desc = "Highlight when yanking (copying) text",
+    group = vim.api.nvim_create_augroup("kickstart-highlight-yank", { clear = true }),
+    callback = function()
+        vim.highlight.on_yank()
+    end,
 })
 
 vim.keymap.set("n", "<leader>gdo", "<cmd>DiffviewOpen<CR>", { silent = true, desc = "Diff Split Open" })
@@ -289,27 +295,24 @@ vim.wo.cursorline = true
 
 -- Puts a link to github in the clipboard
 vim.api.nvim_create_user_command("CopyGithubNewPr", function()
-	local branch = vim.fn.systemlist("git branch --show-current")[1]
-	local origin_url = vim.fn.systemlist("git config --get remote.origin.url")[1]
-	local new_pr_url = origin_url .. "/compare/" .. branch .. "?expand=1"
-    if new_pr_url:match("^git@") then
-      new_pr_url = new_pr_url
-        :gsub("git@github.com:", "https://github.com/")
-        :gsub("%.git$", "") -- strip the .git suffix if needed
+    local branch = vim.fn.systemlist("git branch --show-current")[1]
+    local origin_url = vim.fn.systemlist("git config --get remote.origin.url")[1]
+    if origin_url:match("^git@") then
+        origin_url = origin_url:gsub("git@github.com:", "https://github.com/"):gsub("%.git$", "") -- strip the .git suffix if needed
     else
-      origin_url = origin_url:gsub("%.git$", "") -- also clean up HTTPS if needed
+        origin_url = origin_url:gsub("%.git$", "")                                          -- also clean up HTTPS if needed
     end
-	vim.fn.setreg("+", new_pr_url)
-	print("Copied pr url for branch: " .. new_pr_url)
+    local new_pr_url = origin_url .. "/compare/" .. branch .. "?expand=1"
+    vim.fn.setreg("+", new_pr_url)
+    print("Copied pr url for branch: " .. new_pr_url)
 end, {})
-
 
 vim.keymap.set("n", "<leader>gpr", ":GithubPr<CR>", { noremap = true, silent = true })
 
 vim.api.nvim_create_user_command("CopyBranch", function()
-	local branch = vim.fn.systemlist("git branch --show-current")[1]
-	vim.fn.setreg("+", branch)
-	print("Copied branch: " .. branch)
+    local branch = vim.fn.systemlist("git branch --show-current")[1]
+    vim.fn.setreg("+", branch)
+    print("Copied branch: " .. branch)
 end, {})
 
 vim.keymap.set("n", "<leader>gbc", ":CopyBranch<CR>", { noremap = true, silent = true })
