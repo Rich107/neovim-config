@@ -4,17 +4,8 @@ vim.cmd("set softtabstop=4")
 vim.cmd("set shiftwidth=4")
 vim.g.mapleader = " "
 vim.g.background = "light"
-
-local keymap = vim.keymap -- for conciseness
-
-vim.o.wrap = false
-
-vim.diagnostic.config({
-    virtual_text = true,
-})
-
-vim.opt.swapfile = false
-
+local keymap = vim
+.keymap                   -- for conciseness vim.o.wrap = false vim.diagnostic.config({ virtual_text = true, }) vim.opt.swapfile = false
 -- Makes breakpoingts clearer
 vim.fn.sign_define("DapBreakpoint", {
     text = "🛑",
@@ -299,5 +290,23 @@ vim.api.nvim_set_hl(0, "LineNr", { fg = "white", bold = true })
 vim.api.nvim_set_hl(0, "LineNrBelow", { fg = "#FB508F", bold = true })
 
 vim.wo.cursorline = true
-vim.api.nvim_set_hl(0, "CursorLine", { bg = "#f0f0f0" })                -- Adjust color to suit your theme
-vim.api.nvim_set_hl(0, "CursorLineNr", { fg = "#000000", bold = true }) -- Make line number bold and visible
+-- vim.api.nvim_set_hl(0, "CursorLine", { bg = "#f0f0f0" }) -- Adjust color to suit your theme
+-- vim.api.nvim_set_hl(0, "CursorLineNr", { fg = "#000000", bold = true }) -- Make line number bold and visible
+
+vim.api.nvim_create_user_command("CopyGithubNewPr", function()
+    local branch = vim.fn.systemlist("git branch --show-current")[1]
+    local origin_url = vim.fn.systemlist("git config --get remote.origin.url")[1]
+    local new_pr_url = origin_url .. "/compare/" .. branch .. "?expand=1"
+    vim.fn.setreg("+", new_pr_url)
+    print("Copied pr url for branch: " .. new_pr_url)
+end, {})
+
+vim.keymap.set("n", "<leader>gpr", ":GithubPr<CR>", { noremap = true, silent = true })
+
+vim.api.nvim_create_user_command("CopyBranch", function()
+    local branch = vim.fn.systemlist("git branch --show-current")[1]
+    vim.fn.setreg("+", branch)
+    print("Copied branch: " .. branch)
+end, {})
+
+vim.keymap.set("n", "<leader>gbc", ":CopyBranch<CR>", { noremap = true, silent = true })
