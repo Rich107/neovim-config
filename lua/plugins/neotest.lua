@@ -1,6 +1,12 @@
 if vim.env.HOME == "/Users/richardellison" then
+    vim.notify("--------------------------")
+    vim.notify("Neotest is not running!")
+    vim.notify("--------------------------")
     return {}
 else
+    vim.notify("--------------------------")
+    vim.notify("Neotest is running!")
+    vim.notify("--------------------------")
     return {
         "nvim-neotest/neotest",
         dependencies = {
