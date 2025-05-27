@@ -5,14 +5,12 @@ return {
         "nvim-neotest/nvim-nio",
         "nvim-lua/plenary.nvim",
         "nvim-treesitter/nvim-treesitter",
-        "marilari88/neotest-vitest",
         "nvim-neotest/neotest-python",
     },
     config = function()
         if vim.env.HOME ~= "/Users/richardellison" then -- Then we are in a container
             require("neotest").setup({
                 adapters = {
-                    require("neotest-vitest"),
                     require("neotest-python")({
                         -- Extra arguments for nvim-dap configuration
                         -- See https://github.com/microsoft/debugpy/wiki/Debug-configuration-settings for values
