@@ -7,19 +7,19 @@ return {
 			"nvim-lua/plenary.nvim",
 
 			-- Treesitter config
-			{
-				"nvim-treesitter/nvim-treesitter",
-				build = ":TSUpdate",
-				config = function()
-					require("nvim-treesitter.configs").setup({
-						ensure_installed = { "markdown", "markdown_inline" },
-						highlight = {
-							enable = true,
-							additional_vim_regex_highlighting = false,
-						},
-					})
-				end,
-			},
+			-- {
+			-- 	"nvim-treesitter/nvim-treesitter",
+			-- 	build = ":TSUpdate",
+			-- 	config = function()
+			-- 		require("nvim-treesitter.configs").setup({
+			-- 			ensure_installed = { "markdown", "markdown_inline" },
+			-- 			highlight = {
+			-- 				enable = true,
+			-- 				additional_vim_regex_highlighting = false,
+			-- 			},
+			-- 		})
+			-- 	end,
+			-- },
 
 			-- Markdown prettifier with callouts
 			-- Its working better without this just without the cool call outs.
