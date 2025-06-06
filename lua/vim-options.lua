@@ -317,3 +317,9 @@ end, {})
 vim.keymap.set("n", "<leader>gbc", ":CopyBranch<CR>", { noremap = true, silent = true })
 
 vim.diagnostic.config({ virtual_text = false, virtual_lines = { current_line = true } })
+
+vim.keymap.set("n", "<leader>=", function()
+	local expr = vim.fn.expand("<cword>")
+	local result = load("return " .. expr)()
+	vim.cmd("normal! ciw" .. result)
+end, { desc = "Evaluate inline expression" })
