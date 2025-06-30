@@ -16,7 +16,6 @@ return {
         -- list of formatters & linters for mason to install
         require("mason-null-ls").setup({
             ensure_installed = {
-                "checkmake",
                 -- "prettier", -- ts/js formatter
                 "stylua", -- lua formatter
                 "djlint",
@@ -29,7 +28,6 @@ return {
         })
 
         local sources = {
-            diagnostics.checkmake,
             -- formatting.prettier.with({ filetypes = { "html", "json", "yaml", "markdown" } }),
             formatting.stylua,
             formatting.djlint.with({
