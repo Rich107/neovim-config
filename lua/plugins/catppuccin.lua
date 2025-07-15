@@ -5,6 +5,14 @@ return {
 		name = "catppuccin",
 		priority = 1000,
 		config = function()
+			require("catppuccin").setup({
+				transparent = true,
+				transparent_background = true,
+				styles = {
+					sidebars = "transparent",
+					floats = "transparent",
+				},
+			})
 			-- Set up the colorscheme
 			vim.cmd.colorscheme("catppuccin-mocha")
 			-- Set vertical split color (use WinSeparator in newer Neovim, VertSplit for backward compatibility)
