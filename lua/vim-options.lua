@@ -25,6 +25,7 @@ vim.fn.sign_define("DapStopped", {
 
 -- This allows copy paste to work in ssh connections:
 local osc52 = require("vim.ui.clipboard.osc52")
+local path_utils = require("utils.path_utils")
 
 vim.api.nvim_create_autocmd({ "BufEnter", "TextChanged", "InsertLeave" }, {
 	pattern = "*.vue",
@@ -317,3 +318,12 @@ end, {})
 vim.keymap.set("n", "<leader>gbc", ":CopyBranch<CR>", { noremap = true, silent = true })
 
 vim.diagnostic.config({ virtual_text = false, virtual_lines = { current_line = true } })
+
+
+local yank_path = function()
+	local full_path = vim.fn.expand("%:p")
+	path_utils.copy_relative_path(full_path)
+end
+
+vim.keymap.set("n", "<leader>yp", yank_path, { noremap = true, silent = true, desc = "[y]ank full file [p]ath" })
+vim.keymap.set("n", "<C-y>", yank_path, { noremap = true, silent = true })
