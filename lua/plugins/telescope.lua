@@ -42,7 +42,7 @@ return {
                     },
                 },
             })
-            require("telescope").load_extension("harpoon")
+
             local builtin = require("telescope.builtin")
             local keymap = vim.keymap
             -- keymap.set("n", "<leader>tw", function()
@@ -77,7 +77,23 @@ return {
             keymap.set("n", "<leader>tt", "<cmd>TodoTelescope<cr>", { desc = "Find todos" })
             keymap.set("n", "<leader>th", builtin.help_tags, { desc = "Help Search" })
             keymap.set("n", "<leader>tj", builtin.jumplist, { desc = "Search though jumplist history" })
-            keymap.set("n", "<leader>tl", "<cmd>Telescope harpoon marks<CR>", { desc = "Search Harpoon marks" })
+            keymap.set("n", "<leader>tl", function()
+                local harpoon = require('harpoon')
+                local conf = require("telescope.config").values
+                local file_paths = {}
+                for _, item in ipairs(harpoon:list().items) do
+                    table.insert(file_paths, item.value)
+                end
+
+                require("telescope.pickers").new({}, {
+                    prompt_title = "Harpoon",
+                    finder = require("telescope.finders").new_table({
+                        results = file_paths,
+                    }),
+                    previewer = conf.file_previewer({}),
+                    sorter = conf.generic_sorter({}),
+                }):find()
+            end, { desc = "Search Harpoon marks" })
             keymap.set("n", "<leader>tk", builtin.keymaps, { desc = "Search though keymaps" })
             keymap.set("n", "<leader>ty", builtin.registers, { desc = "Search though registers" })
             vim.api.nvim_set_keymap(
