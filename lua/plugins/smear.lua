@@ -1,6 +1,8 @@
 return {
     "sphamba/smear-cursor.nvim",
 
+    -- Breakds in remote ssh connections
+    enabled = false,
     opts = {
         -- Smear cursor when switching buffers or windows.
         smear_between_buffers = true,
