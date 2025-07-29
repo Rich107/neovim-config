@@ -121,9 +121,9 @@ return {
 				local action_state = require("telescope.actions.state")
 				local previewers = require("telescope.previewers")
 
-				-- Get git log for the current file
+				-- Get git log for the current file with title and body separated
 				local cmd = string.format(
-					"git log --pretty=format:'%%h|%%ad|%%an|%%s' --date=short --follow -- %s",
+					"git log --pretty=format:'%%h|%%ad|%%an|%%s|%%b' --date=short --follow -- %s",
 					vim.fn.shellescape(relative_file)
 				)
 
@@ -131,14 +131,17 @@ return {
 				local handle = io.popen(cmd)
 				if handle then
 					for line in handle:lines() do
-						local hash, date, author, message = line:match("([^|]+)|([^|]+)|([^|]+)|(.+)")
+						local hash, date, author, title, body = line:match("([^|]+)|([^|]+)|([^|]+)|([^|]+)|(.*)") 
 						if hash then
+							-- Clean up the body (remove extra whitespace)
+							body = body and body:gsub("^%s+", ""):gsub("%s+$", "") or ""
 							table.insert(results, {
 								hash = hash,
 								date = date,
 								author = author,
-								message = message,
-								display = string.format("%-8s %s %-15s %s", hash, date, author, message),
+								title = title,
+								body = body,
+								display = string.format("%-8s %s %-15s %s", hash, date, author, title),
 							})
 						end
 					end
@@ -165,7 +168,9 @@ return {
 										.. " "
 										.. entry.author
 										.. " "
-										.. entry.message,
+										.. entry.title
+										.. " "
+										.. entry.body,
 								}
 							end,
 						}),
@@ -197,7 +202,17 @@ return {
 										table.insert(processed_lines, "Commit: " .. entry.value.hash)
 										table.insert(processed_lines, "Date: " .. entry.value.date)
 										table.insert(processed_lines, "Author: " .. entry.value.author)
-										table.insert(processed_lines, "Message: " .. entry.value.message)
+										table.insert(processed_lines, "Title: " .. entry.value.title)
+										if entry.value.body and entry.value.body ~= "" then
+											table.insert(processed_lines, "")
+											-- Split body into lines and add each line
+											local body_lines = vim.split(entry.value.body, "\n")
+											for _, body_line in ipairs(body_lines) do
+												if body_line:gsub("%s", "") ~= "" then -- Skip empty lines
+													table.insert(processed_lines, "  " .. body_line)
+												end
+											end
+										end
 										table.insert(processed_lines, "")
 										table.insert(processed_lines, "Changes to " .. vim.fn.fnamemodify(relative_file, ":t") .. ":")
 										table.insert(processed_lines, string.rep("─", 50))
@@ -227,10 +242,12 @@ return {
 											elseif line:match("^@@") then
 												-- Hunk headers in blue
 												vim.api.nvim_buf_add_highlight(self.state.bufnr, ns_id, "DiffText", i-1, 0, -1)
-											elseif line:match("^Commit:") or line:match("^Date:") or line:match("^Author:") or line:match("^Message:") then
-												-- Header info in bold
-												vim.api.nvim_buf_add_highlight(self.state.bufnr, ns_id, "Title", i-1, 0, -1)
-											end
+										elseif line:match("^Commit:") or line:match("^Date:") or line:match("^Author:") or line:match("^Title:") then
+											-- Header info in bold
+											vim.api.nvim_buf_add_highlight(self.state.bufnr, ns_id, "Title", i-1, 0, -1)
+										elseif line:match("^  ") then
+											-- Commit body (indented) in a softer color
+											vim.api.nvim_buf_add_highlight(self.state.bufnr, ns_id, "Comment", i-1, 0, -1)											end
 										end
 									else
 										-- If no diff (maybe first commit), show the full file
@@ -249,12 +266,23 @@ return {
 												"Commit: " .. entry.value.hash .. " (Initial version)",
 												"Date: " .. entry.value.date,
 												"Author: " .. entry.value.author,
-												"Message: " .. entry.value.message,
-												"",
-												"File content at this commit:",
-												string.rep("─", 50),
-												""
+												"Title: " .. entry.value.title,
 											}
+											
+											if entry.value.body and entry.value.body ~= "" then
+												table.insert(header, "")
+												local body_lines = vim.split(entry.value.body, "\n")
+												for _, body_line in ipairs(body_lines) do
+													if body_line:gsub("%s", "") ~= "" then
+														table.insert(header, "  " .. body_line)
+													end
+												end
+											end
+											
+											table.insert(header, "")
+											table.insert(header, "File content at this commit:")
+											table.insert(header, string.rep("─", 50))
+											table.insert(header, "")
 											
 											-- Combine header with file content
 											for i, line in ipairs(header) do
