@@ -72,6 +72,15 @@ return {
 			end, { desc = "Fuzzy search recent files in CWD" })
 			keymap.set("n", "<leader>tr", builtin.resume, { desc = "Go back to last search" })
 			keymap.set("n", "<leader>ts", builtin.live_grep, { desc = "Find string in cwd" })
+			
+			keymap.set("v", "<leader>ts", function()
+				-- Get the visually selected text
+				vim.cmd('noau normal! "vy"')
+				local selected_text = vim.fn.getreg('v')
+				-- Start live_grep with the selected text as default
+				builtin.live_grep({ default_text = selected_text })
+			end, { desc = "Find selected string in cwd" })
+			
 			keymap.set({ "n", "v" }, "<leader>tv", builtin.grep_string, { desc = "Find selected string in cwd" })
 			-- keymap.set("n", "<leader>tc", builtin.commands, { desc = "Find string under cursor in cwd" })
 			keymap.set("n", "<leader>tt", "<cmd>TodoTelescope<cr>", { desc = "Find todos" })
