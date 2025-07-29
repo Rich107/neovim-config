@@ -436,6 +436,267 @@ return {
 					})
 					:find()
 			end, { desc = "Git file history for current file" })
+
+			-- Visual mode git history for selected lines
+			keymap.set("v", "<leader>th", function()
+				local current_file = vim.fn.expand("%:p")
+				if current_file == "" then
+					vim.notify("No file is currently open", vim.log.levels.WARN)
+					return
+				end
+
+				-- Get visual selection line numbers
+				-- Exit visual mode to set the marks properly
+				vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes('<Esc>', true, false, true), 'nx', false)
+				local start_line = vim.fn.line("'<")
+				local end_line = vim.fn.line("'>")
+				
+				-- Validate line numbers
+				if start_line == 0 or end_line == 0 then
+					vim.notify("Could not determine selected line range", vim.log.levels.ERROR)
+					return
+				end
+				
+				local relative_file = vim.fn.fnamemodify(current_file, ":.")
+				local pickers = require("telescope.pickers")
+				local finders = require("telescope.finders")
+				local conf = require("telescope.config").values
+				local actions = require("telescope.actions")
+				local action_state = require("telescope.actions.state")
+				local previewers = require("telescope.previewers")
+
+				-- Use git log -L to get history for specific line range
+				-- First get the commit hashes that affected these lines
+				local cmd_hashes = string.format(
+					"git log -L %d,%d:%s --pretty=format:'%%h' --no-patch",
+					start_line,
+					end_line,
+					vim.fn.shellescape(relative_file)
+				)
+				
+				local commit_hashes = {}
+				local handle_hashes = io.popen(cmd_hashes)
+				if handle_hashes then
+					for line in handle_hashes:lines() do
+						if line:match("^%w+$") then -- Only commit hashes
+							table.insert(commit_hashes, line)
+						end
+					end
+					handle_hashes:close()
+				end
+				
+				-- Now get detailed info for each commit
+				local results = {}
+				for _, hash in ipairs(commit_hashes) do
+					local cmd_detail = string.format(
+						"git show --no-patch --pretty=format:'%%h|%%ad|%%an|%%s|%%B' --date=short %s",
+						hash
+					)
+					
+					local handle_detail = io.popen(cmd_detail)
+					if handle_detail then
+						local output = handle_detail:read("*all")
+						handle_detail:close()
+						
+						if output and output ~= "" then
+							local lines = vim.split(output, "\n")
+							if #lines > 0 then
+								local header = lines[1]
+								local hash_part, date, author, title, body_start = header:match("([^|]+)|([^|]+)|([^|]+)|([^|]+)|(.*)") 
+								
+								-- Collect body (everything after the header line)
+								local body_lines = {body_start or ""}
+								for i = 2, #lines do
+									table.insert(body_lines, lines[i])
+								end
+								local body = table.concat(body_lines, "\n"):gsub("^%s+", ""):gsub("%s+$", "")
+								
+								-- Remove the title from body if it's duplicated
+								if body:sub(1, #title) == title then
+									body = body:sub(#title + 1):gsub("^%s+", "")
+								end
+								
+								table.insert(results, {
+									hash = hash_part,
+									date = date,
+									author = author,
+									title = title,
+									body = body,
+									display = string.format("%-8s %s %-15s %s", hash_part, date, author, title),
+								})
+							end
+						end
+					end
+				end
+
+				if #results == 0 then
+					vim.notify(string.format("No git history found for lines %d-%d in %s", start_line, end_line, relative_file), vim.log.levels.WARN)
+					return
+				end
+
+				pickers
+					.new({}, {
+						prompt_title = string.format("Git History: Lines %d-%d in %s", start_line, end_line, vim.fn.fnamemodify(relative_file, ":t")),
+						finder = finders.new_table({
+							results = results,
+							entry_maker = function(entry)
+								return {
+									value = entry,
+									display = entry.display,
+									ordinal = entry.hash
+										.. " "
+										.. entry.date
+										.. " "
+										.. entry.author
+										.. " "
+										.. entry.title
+										.. " "
+										.. entry.body,
+								}
+							end,
+						}),
+						sorter = conf.generic_sorter({}),
+						previewer = previewers.new_buffer_previewer({
+							title = "Changes in Selected Lines",
+							get_buffer_by_name = function(_, entry)
+								return "line_diff:" .. entry.value.hash .. ":" .. relative_file .. ":" .. start_line .. "-" .. end_line
+							end,
+							define_preview = function(self, entry, status)
+								-- Get the diff for this specific commit and line range
+								local cmd_diff = string.format(
+									"git show --no-merges --format= --unified=3 %s -- %s",
+									entry.value.hash,
+									vim.fn.shellescape(relative_file)
+								)
+								
+								local handle_diff = io.popen(cmd_diff)
+								if handle_diff then
+									local diff_content = handle_diff:read("*all")
+									handle_diff:close()
+									
+									if diff_content and diff_content ~= "" then
+										-- Process the diff to make it more readable
+										local lines = vim.split(diff_content, "\n")
+										local processed_lines = {}
+										
+										-- Add commit info header
+										table.insert(processed_lines, "Commit: " .. entry.value.hash)
+										table.insert(processed_lines, "Date: " .. entry.value.date)
+										table.insert(processed_lines, "Author: " .. entry.value.author)
+										table.insert(processed_lines, "Title: " .. entry.value.title)
+										table.insert(processed_lines, string.format("Lines: %d-%d", start_line, end_line))
+										
+										if entry.value.body and entry.value.body ~= "" then
+											table.insert(processed_lines, "")
+											-- Split body into lines and wrap long lines
+											local body_lines = vim.split(entry.value.body, "\n")
+											for _, body_line in ipairs(body_lines) do
+												if body_line:gsub("%s", "") ~= "" then -- Skip empty lines
+													-- Wrap long lines at 70 characters
+													local wrapped_lines = {}
+													local line = body_line
+													while #line > 68 do -- 68 to account for 2-space indent
+														local break_pos = 68
+														-- Try to break at a word boundary
+														for i = 68, 40, -1 do
+															if line:sub(i, i):match("%s") then
+																break_pos = i
+																break
+															end
+														end
+														table.insert(wrapped_lines, "  " .. line:sub(1, break_pos):gsub("%s+$", ""))
+														line = line:sub(break_pos + 1):gsub("^%s+", "")
+													end
+													if #line > 0 then
+														table.insert(wrapped_lines, "  " .. line)
+													end
+													
+													for _, wrapped_line in ipairs(wrapped_lines) do
+														table.insert(processed_lines, wrapped_line)
+													end
+												else
+													-- Preserve empty lines in commit body
+													table.insert(processed_lines, "")
+												end
+											end
+										end
+										table.insert(processed_lines, "")
+										table.insert(processed_lines, "Changes affecting selected lines:")
+										table.insert(processed_lines, string.rep("─", 50))
+										table.insert(processed_lines, "")
+										
+										-- Add the diff content
+										for _, line in ipairs(lines) do
+											table.insert(processed_lines, line)
+										end
+										
+										vim.api.nvim_buf_set_lines(self.state.bufnr, 0, -1, false, processed_lines)
+										
+										-- Set diff filetype for syntax highlighting
+										vim.api.nvim_buf_set_option(self.state.bufnr, "filetype", "diff")
+										
+										-- Add some basic diff highlighting
+										local ns_id = vim.api.nvim_create_namespace("telescope_git_line_diff")
+										vim.api.nvim_buf_clear_namespace(self.state.bufnr, ns_id, 0, -1)
+										
+										for i, line in ipairs(processed_lines) do
+											if line:match("^%+") and not line:match("^%+%+%+") then
+												-- Added lines in green
+												vim.api.nvim_buf_add_highlight(self.state.bufnr, ns_id, "DiffAdd", i-1, 0, -1)
+											elseif line:match("^%-") and not line:match("^%-%-%-") then
+												-- Removed lines in red
+												vim.api.nvim_buf_add_highlight(self.state.bufnr, ns_id, "DiffDelete", i-1, 0, -1)
+											elseif line:match("^@@") then
+												-- Hunk headers in blue
+												vim.api.nvim_buf_add_highlight(self.state.bufnr, ns_id, "DiffText", i-1, 0, -1)
+											elseif line:match("^Commit:") or line:match("^Date:") or line:match("^Author:") or line:match("^Title:") or line:match("^Lines:") then
+												-- Header info in bold
+												vim.api.nvim_buf_add_highlight(self.state.bufnr, ns_id, "Title", i-1, 0, -1)
+											elseif line:match("^  ") then
+												-- Commit body (indented) in a softer color
+												vim.api.nvim_buf_add_highlight(self.state.bufnr, ns_id, "Comment", i-1, 0, -1)
+											end
+										end
+									end
+								end
+							end,
+						}),
+						attach_mappings = function(prompt_bufnr, map)
+							actions.select_default:replace(function()
+								local selection = action_state.get_selected_entry()
+								actions.close(prompt_bufnr)
+
+								-- Show diff between current file and selected commit
+								vim.cmd(
+									"DiffviewOpen "
+										.. selection.value.hash
+										.. "^.."
+										.. selection.value.hash
+										.. " -- "
+										.. relative_file
+								)
+							end)
+
+							map("i", "<C-d>", function()
+								local selection = action_state.get_selected_entry()
+								actions.close(prompt_bufnr)
+								-- Show what changed in this commit for this file
+								vim.cmd(
+									"DiffviewOpen "
+										.. selection.value.hash
+										.. "^.."
+										.. selection.value.hash
+										.. " -- "
+										.. relative_file
+								)
+							end)
+
+							return true
+						end,
+					})
+					:find()
+			end, { desc = "Git history for selected lines" })
+
 			keymap.set("n", "<leader>tn", function()
 				require("telescope.builtin").find_files({
 					cwd = vim.fn.stdpath("config"),
