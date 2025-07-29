@@ -171,24 +171,104 @@ return {
 						}),
 						sorter = conf.generic_sorter({}),
 						previewer = previewers.new_buffer_previewer({
-							title = "File at Commit",
+							title = "Changes in Commit",
 							get_buffer_by_name = function(_, entry)
-								return entry.value.hash .. ":" .. relative_file
+								return "diff:" .. entry.value.hash .. ":" .. relative_file
 							end,
 							define_preview = function(self, entry, status)
-								local cmd_show = { "git", "show", entry.value.hash .. ":" .. relative_file }
-								local handle_show = io.popen(table.concat(cmd_show, " "))
-								if handle_show then
-									local content = handle_show:read("*all")
-									handle_show:close()
-
-									local lines = vim.split(content, "\n")
-									vim.api.nvim_buf_set_lines(self.state.bufnr, 0, -1, false, lines)
-
-									-- Set filetype for syntax highlighting
-									local ft = vim.filetype.match({ filename = relative_file })
-									if ft then
-										vim.api.nvim_buf_set_option(self.state.bufnr, "filetype", ft)
+								-- Get the diff for this specific commit and file
+								local cmd_diff = string.format(
+									"git show --no-merges --format= --unified=3 %s -- %s",
+									entry.value.hash,
+									vim.fn.shellescape(relative_file)
+								)
+								
+								local handle_diff = io.popen(cmd_diff)
+								if handle_diff then
+									local diff_content = handle_diff:read("*all")
+									handle_diff:close()
+									
+									if diff_content and diff_content ~= "" then
+										-- Process the diff to make it more readable
+										local lines = vim.split(diff_content, "\n")
+										local processed_lines = {}
+										
+										-- Add commit info header
+										table.insert(processed_lines, "Commit: " .. entry.value.hash)
+										table.insert(processed_lines, "Date: " .. entry.value.date)
+										table.insert(processed_lines, "Author: " .. entry.value.author)
+										table.insert(processed_lines, "Message: " .. entry.value.message)
+										table.insert(processed_lines, "")
+										table.insert(processed_lines, "Changes to " .. vim.fn.fnamemodify(relative_file, ":t") .. ":")
+										table.insert(processed_lines, string.rep("─", 50))
+										table.insert(processed_lines, "")
+										
+										-- Add the diff content
+										for _, line in ipairs(lines) do
+											table.insert(processed_lines, line)
+										end
+										
+										vim.api.nvim_buf_set_lines(self.state.bufnr, 0, -1, false, processed_lines)
+										
+										-- Set diff filetype for syntax highlighting
+										vim.api.nvim_buf_set_option(self.state.bufnr, "filetype", "diff")
+										
+										-- Add some basic diff highlighting
+										local ns_id = vim.api.nvim_create_namespace("telescope_git_diff")
+										vim.api.nvim_buf_clear_namespace(self.state.bufnr, ns_id, 0, -1)
+										
+										for i, line in ipairs(processed_lines) do
+											if line:match("^%+") and not line:match("^%+%+%+") then
+												-- Added lines in green
+												vim.api.nvim_buf_add_highlight(self.state.bufnr, ns_id, "DiffAdd", i-1, 0, -1)
+											elseif line:match("^%-") and not line:match("^%-%-%-") then
+												-- Removed lines in red
+												vim.api.nvim_buf_add_highlight(self.state.bufnr, ns_id, "DiffDelete", i-1, 0, -1)
+											elseif line:match("^@@") then
+												-- Hunk headers in blue
+												vim.api.nvim_buf_add_highlight(self.state.bufnr, ns_id, "DiffText", i-1, 0, -1)
+											elseif line:match("^Commit:") or line:match("^Date:") or line:match("^Author:") or line:match("^Message:") then
+												-- Header info in bold
+												vim.api.nvim_buf_add_highlight(self.state.bufnr, ns_id, "Title", i-1, 0, -1)
+											end
+										end
+									else
+										-- If no diff (maybe first commit), show the full file
+										local cmd_show = string.format(
+											"git show %s:%s",
+											entry.value.hash,
+											vim.fn.shellescape(relative_file)
+										)
+										local handle_show = io.popen(cmd_show)
+										if handle_show then
+											local content = handle_show:read("*all")
+											handle_show:close()
+											
+											local lines = vim.split(content, "\n")
+											local header = {
+												"Commit: " .. entry.value.hash .. " (Initial version)",
+												"Date: " .. entry.value.date,
+												"Author: " .. entry.value.author,
+												"Message: " .. entry.value.message,
+												"",
+												"File content at this commit:",
+												string.rep("─", 50),
+												""
+											}
+											
+											-- Combine header with file content
+											for i, line in ipairs(header) do
+												table.insert(lines, i, line)
+											end
+											
+											vim.api.nvim_buf_set_lines(self.state.bufnr, 0, -1, false, lines)
+											
+											-- Set original filetype for syntax highlighting of content
+											local ft = vim.filetype.match({ filename = relative_file })
+											if ft then
+												vim.api.nvim_buf_set_option(self.state.bufnr, "filetype", ft)
+											end
+										end
 									end
 								end
 							end,
