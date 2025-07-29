@@ -121,28 +121,63 @@ return {
 				local action_state = require("telescope.actions.state")
 				local previewers = require("telescope.previewers")
 
-				-- Get git log for the current file with title and body separated
+				-- Get git log for the current file with full commit messages
 				local cmd = string.format(
-					"git log --pretty=format:'%%h|%%ad|%%an|%%s|%%b' --date=short --follow -- %s",
+					"git log --pretty=format:'COMMIT_START%%n%%h|%%ad|%%an|%%s%%n%%B%%nCOMMIT_END' --date=short --follow -- %s",
 					vim.fn.shellescape(relative_file)
 				)
 
 				local results = {}
 				local handle = io.popen(cmd)
 				if handle then
+					local current_commit = nil
+					local body_lines = {}
+					local in_body = false
+					
 					for line in handle:lines() do
-						local hash, date, author, title, body = line:match("([^|]+)|([^|]+)|([^|]+)|([^|]+)|(.*)") 
-						if hash then
-							-- Clean up the body (remove extra whitespace)
-							body = body and body:gsub("^%s+", ""):gsub("%s+$", "") or ""
-							table.insert(results, {
-								hash = hash,
-								date = date,
-								author = author,
-								title = title,
-								body = body,
-								display = string.format("%-8s %s %-15s %s", hash, date, author, title),
-							})
+						if line == "COMMIT_START" then
+							current_commit = nil
+							body_lines = {}
+							in_body = false
+						elseif line == "COMMIT_END" then
+							if current_commit then
+								-- Process the body: remove the title line and clean up
+								local body = ""
+								if #body_lines > 1 then
+									-- Skip the first line (title) and any empty lines after it
+									local start_idx = 2
+									while start_idx <= #body_lines and body_lines[start_idx]:match("^%s*$") do
+										start_idx = start_idx + 1
+									end
+									
+									if start_idx <= #body_lines then
+										local body_content = {}
+										for i = start_idx, #body_lines do
+											table.insert(body_content, body_lines[i])
+										end
+										body = table.concat(body_content, "\n"):gsub("%s+$", "")
+									end
+								end
+								
+								current_commit.body = body
+								table.insert(results, current_commit)
+							end
+						elseif not in_body then
+							-- Parse the header line
+							local hash, date, author, title = line:match("([^|]+)|([^|]+)|([^|]+)|(.+)")
+							if hash then
+								current_commit = {
+									hash = hash,
+									date = date,
+									author = author,
+									title = title,
+									display = string.format("%-8s %s %-15s %s", hash, date, author, title),
+								}
+								in_body = true
+							end
+						else
+							-- Collect body lines
+							table.insert(body_lines, line)
 						end
 					end
 					handle:close()
@@ -205,11 +240,35 @@ return {
 										table.insert(processed_lines, "Title: " .. entry.value.title)
 										if entry.value.body and entry.value.body ~= "" then
 											table.insert(processed_lines, "")
-											-- Split body into lines and add each line
+											-- Split body into lines and wrap long lines
 											local body_lines = vim.split(entry.value.body, "\n")
 											for _, body_line in ipairs(body_lines) do
 												if body_line:gsub("%s", "") ~= "" then -- Skip empty lines
-													table.insert(processed_lines, "  " .. body_line)
+													-- Wrap long lines at 70 characters
+													local wrapped_lines = {}
+													local line = body_line
+													while #line > 68 do -- 68 to account for 2-space indent
+														local break_pos = 68
+														-- Try to break at a word boundary
+														for i = 68, 40, -1 do
+															if line:sub(i, i):match("%s") then
+																break_pos = i
+																break
+															end
+														end
+														table.insert(wrapped_lines, "  " .. line:sub(1, break_pos):gsub("%s+$", ""))
+														line = line:sub(break_pos + 1):gsub("^%s+", "")
+													end
+													if #line > 0 then
+														table.insert(wrapped_lines, "  " .. line)
+													end
+													
+													for _, wrapped_line in ipairs(wrapped_lines) do
+														table.insert(processed_lines, wrapped_line)
+													end
+												else
+													-- Preserve empty lines in commit body
+													table.insert(processed_lines, "")
 												end
 											end
 										end
@@ -274,7 +333,30 @@ return {
 												local body_lines = vim.split(entry.value.body, "\n")
 												for _, body_line in ipairs(body_lines) do
 													if body_line:gsub("%s", "") ~= "" then
-														table.insert(header, "  " .. body_line)
+														-- Wrap long lines at 70 characters
+														local wrapped_lines = {}
+														local line = body_line
+														while #line > 68 do
+															local break_pos = 68
+															-- Try to break at a word boundary
+															for i = 68, 40, -1 do
+																if line:sub(i, i):match("%s") then
+																	break_pos = i
+																	break
+																end
+															end
+															table.insert(wrapped_lines, "  " .. line:sub(1, break_pos):gsub("%s+$", ""))
+															line = line:sub(break_pos + 1):gsub("^%s+", "")
+														end
+														if #line > 0 then
+															table.insert(wrapped_lines, "  " .. line)
+														end
+														
+														for _, wrapped_line in ipairs(wrapped_lines) do
+															table.insert(header, wrapped_line)
+														end
+													else
+														table.insert(header, "")
 													end
 												end
 											end
