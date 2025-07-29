@@ -77,8 +77,10 @@ return {
 				-- Get the visually selected text
 				vim.cmd('noau normal! "vy"')
 				local selected_text = vim.fn.getreg('v')
-				-- Start live_grep with the selected text as default
-				builtin.live_grep({ default_text = selected_text })
+				-- Escape special regex characters
+				local escaped_text = selected_text:gsub("[%(%)%[%]%{%}%^%$%*%+%?%.%|%-]", "\\%1")
+				-- Start live_grep with the escaped text as default
+				builtin.live_grep({ default_text = escaped_text })
 			end, { desc = "Find selected string in cwd" })
 			
 			keymap.set({ "n", "v" }, "<leader>tv", builtin.grep_string, { desc = "Find selected string in cwd" })
