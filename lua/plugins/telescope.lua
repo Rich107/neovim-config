@@ -115,6 +115,7 @@ return {
 				'<cmd>lua require("telescope.builtin").git_commits({ previewer = delta })<CR>',
 				{ noremap = true, silent = true }
 			)
+			keymap.set("n", "<leader>tb", builtin.git_branches, { desc = "Git branches" })
 
 			-- Git file history picker
 			keymap.set("n", "<leader>th", function()
