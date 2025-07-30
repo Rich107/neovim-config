@@ -307,7 +307,7 @@ vim.api.nvim_create_user_command("CopyGithubNewPr", function()
 	print("Copied pr url for branch: " .. new_pr_url)
 end, {})
 
-vim.keymap.set("n", "<leader>gpr", ":GithubPr<CR>", { noremap = true, silent = true })
+vim.keymap.set("n", "<leader>gpr", ":CopyGithubNewPr<CR>", { noremap = true, silent = true })
 
 vim.api.nvim_create_user_command("CopyBranch", function()
 	local branch = vim.fn.systemlist("git branch --show-current")[1]
@@ -318,7 +318,6 @@ end, {})
 vim.keymap.set("n", "<leader>gbc", ":CopyBranch<CR>", { noremap = true, silent = true })
 
 vim.diagnostic.config({ virtual_text = false, virtual_lines = { current_line = true } })
-
 
 local yank_path = function()
 	local full_path = vim.fn.expand("%:p")
