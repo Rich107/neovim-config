@@ -116,7 +116,28 @@ return {
 				{ noremap = true, silent = true }
 			)
 			keymap.set("n", "<leader>tb", function()
-				builtin.git_branches({ previewer = false })
+				builtin.git_branches({ 
+					previewer = false,
+					attach_mappings = function(prompt_bufnr, map)
+						local actions = require("telescope.actions")
+						local action_state = require("telescope.actions.state")
+						
+						actions.select_default:replace(function()
+							local selection = action_state.get_selected_entry()
+							actions.close(prompt_bufnr)
+							
+							-- Extract branch name from the selection
+							local branch_name = selection.value
+							-- Remove "origin/" prefix if present for remote branches
+							local local_branch = branch_name:gsub("^origin/", "")
+							
+							-- Check out the branch by name, not commit
+							vim.cmd("Git checkout " .. vim.fn.shellescape(local_branch))
+						end)
+						
+						return true
+					end
+				})
 			end, { desc = "Git branches" })
 
 			-- Git file history picker
