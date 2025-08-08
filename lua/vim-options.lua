@@ -210,6 +210,7 @@ keymap.set("v", "<leader>y", '"+y', { desc = "yank to buffer" })
 -- line numbers
 vim.opt.relativenumber = true -- show relative line numbers
 vim.opt.number = true -- shows absolute line number on cursor line (when relative number is on)
+vim.opt.showmode = false -- lualine/noice handle mode; avoid '-- INSERT --' messages
 
 -- go to url:
 vim.keymap.set("n", "gx", "<esc>:URLOpenUnderCursor<cr>")
