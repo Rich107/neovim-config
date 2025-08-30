@@ -29,7 +29,7 @@ local get_git_diff_files = function(opts)
 		return
 	end
 
-	local git_diff_command = "git diff --name-only " .. primary_branch
+	local git_diff_command = "git diff --name-only " .. primary_branch .. "..."
 	local files = vim.fn.systemlist(git_diff_command)
 
 	return files
