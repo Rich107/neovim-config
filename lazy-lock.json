@@ -57,6 +57,7 @@
   "octo.nvim": { "branch": "master", "commit": "537adaa06bd3f86cea5d219810770a1ec40bb79d" },
   "oil.nvim": { "branch": "master", "commit": "685cdb4ffa74473d75a1b97451f8654ceeab0f4a" },
   "one-small-step-for-vimkind": { "branch": "main", "commit": "a2adadde3bcdb56a57dbba2a1f3eb39e24771f1c" },
+  "opencode.nvim": { "branch": "main", "commit": "00d585d6a74a866464e437699a486de7171ff05a" },
   "plenary.nvim": { "branch": "master", "commit": "857c5ac632080dba10aae49dba902ce3abf91b35" },
   "quick-scope": { "branch": "master", "commit": "f2b6043e04d9ef05205c8953e389304a4c1946f2" },
   "render-markdown.nvim": { "branch": "main", "commit": "b8c3d474d4da14fa1a5f9a0a18955c6e7db88f65" },
