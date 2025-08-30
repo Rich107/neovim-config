@@ -1,10 +1,10 @@
 return {
 	"NickvanDyke/opencode.nvim",
 	dependencies = { "folke/snacks.nvim" },
-    ---@type opencode.Config
-    opts = {
-        port = 89898,
-    },
+	---@type require('opencode').Config
+	opts = {
+		-- port = 60601,
+	},
     -- stylua: ignore
     keys = {
         { '<leader>ot', function() require('opencode').toggle() end,                           desc = 'Toggle embedded opencode', },
