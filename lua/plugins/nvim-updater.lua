@@ -6,7 +6,7 @@ return {
 			local config_dir = vim.fn.expand("~/.config/nvim")
 			local backup_dir = vim.fn.expand("~/.config/nvim_backup_" .. timestamp)
 
-			print("Nvim config:")
+			print("Nvim config: ")
 			print("Creating backup at: " .. backup_dir)
 
 			-- Create backup
