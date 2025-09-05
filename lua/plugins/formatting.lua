@@ -13,20 +13,23 @@ return {
 				svelte = { "biome" },
 				css = { "biome" },
 				html = { "biome" },
-				django = { "djhmtl" },
+				django = { "djlint" },
 				json = { "biome" },
 				yaml = { "biome" },
 				markdown = { "biome" },
 				graphql = { "biome" },
 				liquid = { "biome" },
 				lua = { "stylua" },
-				python = { "ruff" },
+				python = { "ruff_format", "ruff" },
+				sh = { "shfmt" },
+				bash = { "shfmt" },
+				terraform = { "terraform_fmt" },
 			},
-			format_on_save = {
-				lsp_fallback = false,
-				async = false,
-				timeout_ms = 1000,
-			},
+			-- format_on_save = {
+			-- 	lsp_fallback = false,
+			-- 	async = false,
+			-- 	timeout_ms = 1000,
+			-- },
 		})
 		-- Not going with this as it moved the curosr on run:
 		-- vim.api.nvim_create_autocmd("BufWritePre", {
