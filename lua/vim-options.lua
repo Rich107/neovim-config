@@ -317,6 +317,19 @@ end, {})
 
 vim.keymap.set("n", "<leader>gbc", ":CopyBranch<CR>", { noremap = true, silent = true })
 
+-- Neovim config update
+vim.api.nvim_create_user_command("NeovimUpdate", function()
+	local update_script = [[
+echo "Nvim config:"
+rm -rf ~/.config/nvim
+git clone https://github.com/Rich107/neovim-config.git ~/.config/nvim/
+]]
+	vim.cmd("split")
+	vim.cmd("terminal " .. update_script)
+end, {})
+
+vim.keymap.set("n", "<leader>nu", ":NeovimUpdate<CR>", { noremap = true, silent = true, desc = "Update Neovim config" })
+
 vim.diagnostic.config({ virtual_text = false, virtual_lines = { current_line = true } })
 
 local yank_path = function()
