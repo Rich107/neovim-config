@@ -22,11 +22,11 @@ return {
 				lua = { "stylua" },
 				python = { "ruff" },
 			},
-			format_on_save = {
-				lsp_fallback = false,
-				async = false,
-				timeout_ms = 1000,
-			},
+			-- format_on_save = {
+			-- 	lsp_fallback = false,
+			-- 	async = false,
+			-- 	timeout_ms = 1000,
+			-- },
 		})
 		-- Not going with this as it moved the curosr on run:
 		-- vim.api.nvim_create_autocmd("BufWritePre", {
