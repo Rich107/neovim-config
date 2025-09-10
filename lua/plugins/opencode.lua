@@ -11,9 +11,10 @@ local function generate_commit_message()
     -- Remove newlines and limit length to avoid input issues
     staged_changes = staged_changes:gsub("\n", " "):sub(1, 1000)
     
-    local prompt = "Analyze these staged git changes and generate a concise commit message using conventional commit format. Use one of these prefixes: feat:, fix:, refactor:, docs:, style:, test:, chore:. Rules: Start with appropriate prefix, keep under 72 characters, use imperative mood, be specific. Staged changes: " .. staged_changes .. " Generate only the commit message, nothing else:"
+    local prompt = "Generate a commit message using conventional commit format (feat:, fix:, refactor:, docs:, style:, test:, chore:). Keep under 72 characters, use imperative mood. Changes: " .. staged_changes .. " Reply with ONLY the commit message:"
     
     require('opencode').ask(prompt)
+    vim.notify("Generate message with <leader>oc, then copy with <leader>oy and paste", vim.log.levels.INFO)
 end
 
 return {
