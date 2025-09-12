@@ -731,17 +731,56 @@ return {
 			end, { desc = "Search diagnostics in current buffer" })
 			keymap.set("n", "<leader>tm", builtin.lsp_document_symbols, { desc = "Search symbols in current buffer" })
 			keymap.set("n", "<leader>tM", function()
-				builtin.lsp_workspace_symbols({
-					-- Options you can pass:
-					query = nil,  -- Initial search query
-					symbol_width = 50,  -- Width of symbol column
-					symbol_type_width = 12,  -- Width of symbol type column
-					fname_width = 30,  -- Width of filename column
-					show_line = true,  -- Show line numbers
-					-- You can also pass any telescope picker options:
-					layout_strategy = "vertical",
-					previewer = true,
-				})
+				-- Prompt user for symbol type selection
+				local symbol_types = {
+					{ display = "Function", query = "function" },
+					{ display = "Class", query = "class" },
+					{ display = "Variable", query = "var" },
+					{ display = "Method", query = "method" },
+					{ display = "Property", query = "property" },
+					{ display = "Field", query = "field" },
+					{ display = "Interface", query = "interface" },
+					{ display = "Module", query = "module" },
+					{ display = "Constant", query = "const" },
+					{ display = "Enum", query = "enum" },
+					{ display = "Struct", query = "struct" },
+					{ display = "Constructor", query = "constructor" },
+					{ display = "Namespace", query = "namespace" },
+					{ display = "Package", query = "package" },
+					{ display = "Type", query = "type" },
+					{ display = "Event", query = "event" },
+					{ display = "Operator", query = "operator" },
+					{ display = "Custom Query", query = "" }, -- Let user type their own
+				}
+
+				vim.ui.select(symbol_types, {
+					prompt = "Select symbol type to search for:",
+					format_item = function(item)
+						return item.display
+					end,
+				}, function(choice)
+					if choice then
+						if choice.query == "" then
+							-- Custom query - prompt for input
+							vim.ui.input({ prompt = "Enter search query: " }, function(custom_query)
+								if custom_query and custom_query ~= "" then
+									builtin.lsp_workspace_symbols({
+										query = custom_query,
+										layout_strategy = "vertical",
+										previewer = true,
+									})
+								end
+							end)
+						else
+							-- Use predefined query
+							builtin.lsp_workspace_symbols({
+								query = choice.query,
+								layout_strategy = "vertical",
+								previewer = true,
+							})
+						end
+					end
+				end)
 			end, { desc = "Search symbols in workspace" })
 
 			-- Slightly advanced example of overriding default behavior and theme
