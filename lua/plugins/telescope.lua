@@ -729,6 +729,7 @@ return {
 			keymap.set("n", "<leader>td", function()
 				builtin.diagnostics({ bufnr = 0 })
 			end, { desc = "Search diagnostics in current buffer" })
+			keymap.set("n", "<leader>tm", builtin.lsp_document_symbols, { desc = "Search symbols in current buffer" })
 
 			-- Slightly advanced example of overriding default behavior and theme
 			vim.keymap.set("n", "<leader>/", function()
