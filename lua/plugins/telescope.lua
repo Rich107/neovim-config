@@ -730,6 +730,19 @@ return {
 				builtin.diagnostics({ bufnr = 0 })
 			end, { desc = "Search diagnostics in current buffer" })
 			keymap.set("n", "<leader>tm", builtin.lsp_document_symbols, { desc = "Search symbols in current buffer" })
+			keymap.set("n", "<leader>tM", function()
+				builtin.lsp_workspace_symbols({
+					-- Options you can pass:
+					query = nil,  -- Initial search query
+					symbol_width = 50,  -- Width of symbol column
+					symbol_type_width = 12,  -- Width of symbol type column
+					fname_width = 30,  -- Width of filename column
+					show_line = true,  -- Show line numbers
+					-- You can also pass any telescope picker options:
+					layout_strategy = "vertical",
+					previewer = true,
+				})
+			end, { desc = "Search symbols in workspace" })
 
 			-- Slightly advanced example of overriding default behavior and theme
 			vim.keymap.set("n", "<leader>/", function()
