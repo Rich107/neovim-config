@@ -197,7 +197,7 @@ keymap.set("i", "£", "#", { desc = "Type # instead of £" })
 
 -- Obsidian
 keymap.set("n", "<leader>ob", "<cmd>ObsidianBacklinks<CR>", { desc = "Obsidian Backlinks" })
-vim.opt.conceallevel = 1 -- or 2
+vim.opt.conceallevel = 0 -- or 2
 
 vim.wo.number = true
 
