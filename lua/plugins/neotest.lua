@@ -54,7 +54,7 @@ else
 			{
 				"<leader>ro",
 				function()
-					require("neotest").output.open({ enter = true, auto_close = true })
+                    require("neotest").output.open({ enter = false, auto_close = true })
 				end,
 				desc = "Show Output (Neotest)",
 			},
