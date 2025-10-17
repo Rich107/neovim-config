@@ -4,6 +4,13 @@ vim.cmd("set softtabstop=4")
 vim.cmd("set shiftwidth=4")
 vim.g.mapleader = " "
 vim.g.background = "light"
+
+-- Folding configuration
+vim.opt.foldenable = true
+vim.opt.foldmethod = "expr"
+vim.opt.foldexpr = "nvim_treesitter#foldexpr()"
+vim.opt.foldlevel = 99
+vim.opt.foldlevelstart = 99
 local keymap = vim.keymap -- for conciseness vim.o.wrap = false vim.diagnostic.config({ virtual_text = true, }) vim.opt.swapfile = false
 -- Makes breakpoingts clearer
 vim.fn.sign_define("DapBreakpoint", {
