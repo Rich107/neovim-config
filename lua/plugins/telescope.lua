@@ -50,10 +50,17 @@ return {
 			-- end, { desc = "Fuzzy find files + failing to find hidden files" })
 			keymap.set("n", "<leader>tf", function()
 				require("telescope.builtin").find_files({
-					find_command = { "rg", "--ignore", "--hidden", "--files" },
+					find_command = { "rg", "--hidden", "--files" },
 					prompt_prefix = "🔭 ",
 				})
 			end, { desc = "Fuzzy find files + hidden files" })
+			
+			keymap.set("n", "<leader>tF", function()
+				require("telescope.builtin").find_files({
+					find_command = { "rg", "--no-ignore", "--hidden", "--files" },
+					prompt_prefix = "🔭 ",
+				})
+			end, { desc = "Fuzzy find ALL files (includes gitignored)" })
 
 			keymap.set("n", "<leader>ss", function()
 				require("telescope.builtin").spell_suggest({
