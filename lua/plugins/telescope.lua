@@ -77,7 +77,10 @@ return {
 			keymap.set("n", "<leader>to", function()
 				builtin.oldfiles({ cwd_only = true })
 			end, { desc = "Fuzzy search recent files in CWD" })
-			keymap.set("n", "<leader>tr", builtin.resume, { desc = "Go back to last search" })
+			keymap.set("n", "<leader>tr", function()
+				require("plugins.telescope.justfile-picker").pick_just_recipe()
+			end, { desc = "Pick and run Just recipe in tmux" })
+			keymap.set("n", "<leader>tR", builtin.resume, { desc = "Resume last Telescope search" })
 			keymap.set("n", "<leader>ts", builtin.live_grep, { desc = "Find string in cwd" })
 			
 			keymap.set("v", "<leader>ts", function()
