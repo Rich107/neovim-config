@@ -6,7 +6,7 @@ local conf = require("telescope.config").values
 local actions = require("telescope.actions")
 local action_state = require("telescope.actions.state")
 
--- Function to parse a single just file and extract recipe names
+-- Function to parse a single just file and extract recipes with metadata
 local function parse_just_file(file_path)
 	local recipes = {}
 	local file = io.open(file_path, "r")
@@ -14,27 +14,78 @@ local function parse_just_file(file_path)
 		return recipes
 	end
 
-	-- Parse the file for recipe names
+	-- Read all lines into a table for easier parsing
+	local lines = {}
 	for line in file:lines() do
+		table.insert(lines, line)
+	end
+	file:close()
+
+	local i = 1
+	while i <= #lines do
+		local line = lines[i]
+		local description = ""
+		local group = ""
+		
+		-- Check for description comment (# comment above recipe)
+		if i > 1 and lines[i-1]:match("^%s*#%s*(.+)") then
+			description = lines[i-1]:match("^%s*#%s*(.+)")
+			-- Trim whitespace
+			description = description:gsub("^%s*(.-)%s*$", "%1")
+		end
+		
+		-- Check for group attribute [group('name')]
+		if i > 1 and lines[i-1]:match("%[group%(['\"](.-)['\"]%)%]") then
+			group = lines[i-1]:match("%[group%(['\"](.-)['\"]%)%]")
+		end
+		-- Also check two lines up for group (in case there's a description between)
+		if group == "" and i > 2 and lines[i-2]:match("%[group%(['\"](.-)['\"]%)%]") then
+			group = lines[i-2]:match("%[group%(['\"](.-)['\"]%)%]")
+		end
+		
 		-- Match recipe names (lines that start with a non-whitespace character followed by a colon)
-		-- This regex matches typical Just recipe definitions
 		local recipe_name = line:match("^([%w-_]+)%s*%(.*%)%s*:")
 		if not recipe_name then
 			recipe_name = line:match("^([%w-_]+)%s*:")
 		end
+		
 		if recipe_name and recipe_name ~= "" then
 			-- Skip common keywords that might match but aren't recipes
 			if not (recipe_name:match("^#") or recipe_name:match("^@")) then
-				table.insert(recipes, recipe_name)
+				table.insert(recipes, {
+					name = recipe_name,
+					description = description,
+					group = group
+				})
 			end
 		end
+		
+		i = i + 1
 	end
 
-	file:close()
 	return recipes
 end
 
--- Function to find all just files and extract recipe names
+-- Function to format display string with columns
+local function format_recipe_display(recipe, file, group, description)
+	-- Column widths
+	local recipe_width = 20
+	local file_width = 15
+	local group_width = 15
+	
+	-- Pad strings to column widths
+	local recipe_col = string.format("%-" .. recipe_width .. "s", string.sub(recipe, 1, recipe_width))
+	local file_col = string.format("%-" .. file_width .. "s", string.sub(file, 1, file_width))
+	local group_col = string.format("%-" .. group_width .. "s", string.sub(group or "-", 1, group_width))
+	
+	-- Description gets the rest of the space
+	local desc_text = description or ""
+	
+	-- Use vertical bars as separators for better visibility
+	return recipe_col .. " │ " .. file_col .. " │ " .. group_col .. " │ " .. desc_text
+end
+
+-- Function to find all just files and extract recipes with metadata
 local function parse_all_justfiles()
 	local all_recipes = {}
 	local cwd = vim.fn.getcwd()
@@ -56,11 +107,18 @@ local function parse_all_justfiles()
 	if main_file then
 		local recipes = parse_just_file(main_file)
 		local filename = vim.fn.fnamemodify(main_file, ":t")
-		for _, recipe in ipairs(recipes) do
+		for _, recipe_info in ipairs(recipes) do
 			table.insert(all_recipes, {
-				name = recipe,
+				name = recipe_info.name,
 				file = filename,
-				display = recipe .. " (" .. filename .. ")"
+				group = recipe_info.group,
+				description = recipe_info.description,
+				display = format_recipe_display(
+					recipe_info.name,
+					filename,
+					recipe_info.group,
+					recipe_info.description
+				)
 			})
 		end
 	end
@@ -70,11 +128,18 @@ local function parse_all_justfiles()
 	for _, file_path in ipairs(just_files) do
 		local recipes = parse_just_file(file_path)
 		local filename = vim.fn.fnamemodify(file_path, ":t")
-		for _, recipe in ipairs(recipes) do
+		for _, recipe_info in ipairs(recipes) do
 			table.insert(all_recipes, {
-				name = recipe,
+				name = recipe_info.name,
 				file = filename,
-				display = recipe .. " (" .. filename .. ")"
+				group = recipe_info.group,
+				description = recipe_info.description,
+				display = format_recipe_display(
+					recipe_info.name,
+					filename,
+					recipe_info.group,
+					recipe_info.description
+				)
 			})
 		end
 	end
@@ -183,18 +248,19 @@ function M.pick_just_recipe()
 	end
 
 	pickers.new({}, {
-		prompt_title = "Just Recipes",
+		prompt_title = "Just Recipes (Recipe | File | Group | Description)",
 		finder = finders.new_table({
 			results = recipes,
 			entry_maker = function(entry)
 				return {
 					value = entry,
 					display = entry.display,
-					ordinal = entry.name .. " " .. entry.file,
+					ordinal = entry.name .. " " .. (entry.group or "") .. " " .. (entry.description or "") .. " " .. entry.file,
 				}
 			end,
 		}),
 		sorter = conf.generic_sorter({}),
+		previewer = false,
 		attach_mappings = function(prompt_bufnr, _)
 			actions.select_default:replace(function()
 				actions.close(prompt_bufnr)
