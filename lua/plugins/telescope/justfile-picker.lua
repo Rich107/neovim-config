@@ -47,7 +47,7 @@ local function parse_justfile()
 	return recipes
 end
 
--- Function to run a Just command in a new tmux window
+-- Function to run a Just command in a new or existing tmux window
 local function run_in_tmux(recipe_name)
 	-- Check if we're in a tmux session
 	local tmux_session = vim.fn.getenv("TMUX")
@@ -56,12 +56,34 @@ local function run_in_tmux(recipe_name)
 		return
 	end
 
-	-- Create a new tmux window with the recipe name and run the just command
-	local cmd = string.format("tmux new-window -n '%s' 'just %s; read -p \"Press enter to close...\"'", recipe_name, recipe_name)
-	vim.fn.system(cmd)
-
-	-- Notify the user
-	vim.notify(string.format("Running 'just %s' in new tmux window", recipe_name), vim.log.levels.INFO)
+	-- Window name with "just-" prefix
+	local window_name = "just-" .. recipe_name
+	
+	-- Check if a window with this name already exists in the current session
+	local check_window_cmd = string.format("tmux list-windows -F '#{window_name}' | grep -q '^%s$'", window_name)
+	vim.fn.system(check_window_cmd)
+	local exit_code = vim.v.shell_error
+	
+	if exit_code == 0 then
+		-- Window exists, switch to it and run the command
+		local switch_cmd = string.format("tmux select-window -t '%s'", window_name)
+		vim.fn.system(switch_cmd)
+		
+		-- Send the just command to the existing window
+		local send_cmd = string.format("tmux send-keys -t '%s' C-c C-u 'just %s' Enter", window_name, recipe_name)
+		vim.fn.system(send_cmd)
+		
+		vim.notify(string.format("Reusing existing window 'just-%s' and running command", recipe_name), vim.log.levels.INFO)
+	else
+		-- Create a new window with a shell that runs the command and stays open
+		local create_cmd = string.format(
+			"tmux new-window -n '%s' 'echo \"Running: just %s\"; echo \"===================\"; just %s; echo \"\"; echo \"Command completed. Press Ctrl-C to exit or run more commands.\"; exec bash'",
+			window_name, recipe_name, recipe_name
+		)
+		vim.fn.system(create_cmd)
+		
+		vim.notify(string.format("Created new window 'just-%s' and running command", recipe_name), vim.log.levels.INFO)
+	end
 end
 
 -- Main picker function
