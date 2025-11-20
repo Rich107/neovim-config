@@ -6,28 +6,15 @@ local conf = require("telescope.config").values
 local actions = require("telescope.actions")
 local action_state = require("telescope.actions.state")
 
--- Function to parse Justfile and extract recipe names
-local function parse_justfile()
-	local justfile_path = vim.fn.getcwd() .. "/Justfile"
-	local alt_justfile_path = vim.fn.getcwd() .. "/justfile"
-
-	-- Check for both Justfile and justfile
-	local file_path = nil
-	if vim.fn.filereadable(justfile_path) == 1 then
-		file_path = justfile_path
-	elseif vim.fn.filereadable(alt_justfile_path) == 1 then
-		file_path = alt_justfile_path
-	else
-		return {}
-	end
-
+-- Function to parse a single just file and extract recipe names
+local function parse_just_file(file_path)
 	local recipes = {}
 	local file = io.open(file_path, "r")
 	if not file then
-		return {}
+		return recipes
 	end
 
-	-- Parse the Justfile for recipe names
+	-- Parse the file for recipe names
 	for line in file:lines() do
 		-- Match recipe names (lines that start with a non-whitespace character followed by a colon)
 		-- This regex matches typical Just recipe definitions
@@ -45,6 +32,54 @@ local function parse_justfile()
 
 	file:close()
 	return recipes
+end
+
+-- Function to find all just files and extract recipe names
+local function parse_all_justfiles()
+	local all_recipes = {}
+	local cwd = vim.fn.getcwd()
+	
+	-- Check for main Justfile/justfile
+	local main_files = {
+		cwd .. "/Justfile",
+		cwd .. "/justfile"
+	}
+	
+	local main_file = nil
+	for _, path in ipairs(main_files) do
+		if vim.fn.filereadable(path) == 1 then
+			main_file = path
+			break
+		end
+	end
+	
+	if main_file then
+		local recipes = parse_just_file(main_file)
+		local filename = vim.fn.fnamemodify(main_file, ":t")
+		for _, recipe in ipairs(recipes) do
+			table.insert(all_recipes, {
+				name = recipe,
+				file = filename,
+				display = recipe .. " (" .. filename .. ")"
+			})
+		end
+	end
+	
+	-- Find and parse all .just files in the current directory
+	local just_files = vim.fn.glob(cwd .. "/*.just", false, true)
+	for _, file_path in ipairs(just_files) do
+		local recipes = parse_just_file(file_path)
+		local filename = vim.fn.fnamemodify(file_path, ":t")
+		for _, recipe in ipairs(recipes) do
+			table.insert(all_recipes, {
+				name = recipe,
+				file = filename,
+				display = recipe .. " (" .. filename .. ")"
+			})
+		end
+	end
+	
+	return all_recipes
 end
 
 -- Function to run a Just command in a new or existing tmux window
@@ -88,10 +123,10 @@ end
 
 -- Main picker function
 function M.pick_just_recipe()
-	local recipes = parse_justfile()
+	local recipes = parse_all_justfiles()
 
 	if #recipes == 0 then
-		vim.notify("No Justfile found or no recipes detected in the current directory", vim.log.levels.WARN)
+		vim.notify("No Justfile or .just files found, or no recipes detected in the current directory", vim.log.levels.WARN)
 		return
 	end
 
@@ -99,6 +134,13 @@ function M.pick_just_recipe()
 		prompt_title = "Just Recipes",
 		finder = finders.new_table({
 			results = recipes,
+			entry_maker = function(entry)
+				return {
+					value = entry,
+					display = entry.display,
+					ordinal = entry.name .. " " .. entry.file,
+				}
+			end,
 		}),
 		sorter = conf.generic_sorter({}),
 		attach_mappings = function(prompt_bufnr, _)
@@ -106,7 +148,7 @@ function M.pick_just_recipe()
 				actions.close(prompt_bufnr)
 				local selection = action_state.get_selected_entry()
 				if selection then
-					run_in_tmux(selection[1])
+					run_in_tmux(selection.value.name)
 				end
 			end)
 			return true
