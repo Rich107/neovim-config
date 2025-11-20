@@ -130,7 +130,53 @@ end
 -- Table to store terminal buffer IDs for each recipe
 local terminal_buffers = {}
 
-
+-- Function to run a Just command in Neovim terminal with custom command
+local function run_in_neovim_terminal_with_cmd(display_name, just_cmd, recipe_name)
+	local buf_name = "just-" .. display_name
+	local buf_id = terminal_buffers[buf_name]
+	
+	-- Check if we already have a terminal buffer for this recipe
+	if buf_id and vim.api.nvim_buf_is_valid(buf_id) then
+		-- Reuse existing terminal buffer
+		-- Find or create a window for the buffer
+		local win_id = vim.fn.bufwinid(buf_id)
+		if win_id == -1 then
+			-- Buffer exists but no window, create a new split
+			vim.cmd("split")
+			vim.api.nvim_set_current_buf(buf_id)
+		else
+			-- Window exists, focus it
+			vim.api.nvim_set_current_win(win_id)
+		end
+		
+		-- Send interrupt and run the command again
+		vim.api.nvim_chan_send(vim.b.terminal_job_id, "\x03")  -- Ctrl-C
+		vim.defer_fn(function()
+			vim.api.nvim_chan_send(vim.b.terminal_job_id, string.format("clear && %s %s\n", just_cmd, recipe_name))
+		end, 100)
+		
+		vim.notify(string.format("Reusing terminal buffer for 'just-%s'", display_name), vim.log.levels.INFO)
+	else
+		-- Create a new terminal buffer
+		vim.cmd("split")
+		vim.cmd("terminal")
+		buf_id = vim.api.nvim_get_current_buf()
+		terminal_buffers[buf_name] = buf_id
+		
+		-- Set buffer name
+		vim.api.nvim_buf_set_name(buf_id, buf_name)
+		
+		-- Send the just command
+		vim.defer_fn(function()
+			vim.api.nvim_chan_send(vim.b.terminal_job_id, string.format("%s %s\n", just_cmd, recipe_name))
+		end, 100)
+		
+		vim.notify(string.format("Created new terminal buffer for 'just-%s'", display_name), vim.log.levels.INFO)
+	end
+	
+	-- Enter insert mode to interact with the terminal
+	vim.cmd("startinsert")
+end
 
 -- Function to run a Just command in tmux or Neovim terminal
 local function run_recipe(recipe_name)
@@ -183,54 +229,6 @@ local function run_recipe(recipe_name)
 		
 		vim.notify(string.format("Created new tmux window 'just-%s'", display_name), vim.log.levels.INFO)
 	end
-end
-
--- Function to run a Just command in Neovim terminal with custom command
-local function run_in_neovim_terminal_with_cmd(display_name, just_cmd, recipe_name)
-	local buf_name = "just-" .. display_name
-	local buf_id = terminal_buffers[buf_name]
-	
-	-- Check if we already have a terminal buffer for this recipe
-	if buf_id and vim.api.nvim_buf_is_valid(buf_id) then
-		-- Reuse existing terminal buffer
-		-- Find or create a window for the buffer
-		local win_id = vim.fn.bufwinid(buf_id)
-		if win_id == -1 then
-			-- Buffer exists but no window, create a new split
-			vim.cmd("split")
-			vim.api.nvim_set_current_buf(buf_id)
-		else
-			-- Window exists, focus it
-			vim.api.nvim_set_current_win(win_id)
-		end
-		
-		-- Send interrupt and run the command again
-		vim.api.nvim_chan_send(vim.b.terminal_job_id, "\x03")  -- Ctrl-C
-		vim.defer_fn(function()
-			vim.api.nvim_chan_send(vim.b.terminal_job_id, string.format("clear && %s %s\n", just_cmd, recipe_name))
-		end, 100)
-		
-		vim.notify(string.format("Reusing terminal buffer for 'just-%s'", display_name), vim.log.levels.INFO)
-	else
-		-- Create a new terminal buffer
-		vim.cmd("split")
-		vim.cmd("terminal")
-		buf_id = vim.api.nvim_get_current_buf()
-		terminal_buffers[buf_name] = buf_id
-		
-		-- Set buffer name
-		vim.api.nvim_buf_set_name(buf_id, buf_name)
-		
-		-- Send the just command
-		vim.defer_fn(function()
-			vim.api.nvim_chan_send(vim.b.terminal_job_id, string.format("%s %s\n", just_cmd, recipe_name))
-		end, 100)
-		
-		vim.notify(string.format("Created new terminal buffer for 'just-%s'", display_name), vim.log.levels.INFO)
-	end
-	
-	-- Enter insert mode to interact with the terminal
-	vim.cmd("startinsert")
 end
 
 -- Main picker function
