@@ -262,7 +262,7 @@ return {
 					end
 
 					map("gd", require("telescope.builtin").lsp_definitions, "[G]oto [D]efinition")
-					map("gr", require("telescope.builtin").lsp_references "[G]oto [R]eferences")
+					map("gr", require("telescope.builtin").lsp_references, "[G]oto [R]eferences")
 					vim.keymap.set("n", "<leader>k", vim.lsp.buf.hover, {})
 					vim.keymap.set("n", "<leader>gr", vim.lsp.buf.references, {})
 					vim.keymap.set("n", "<leader>ca", vim.lsp.buf.code_action, {})
