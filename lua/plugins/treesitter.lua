@@ -4,9 +4,24 @@ return {
         build = ":TSUpdate",
         event = { "BufReadPost", "BufNewFile" },
         config = function()
+            -- Setup treesitter configs with default settings
             require("nvim-treesitter.configs").setup({
                 auto_install = true,
-                highlight = { enable = true },
+                highlight = { 
+                    enable = true,
+                    -- Disable treesitter highlight for large files
+                    disable = function(_, buf)
+                        local max_filesize = 4000 * 1024 -- 4000 KB or roughly 4000 lines
+                        local ok, stats = pcall(vim.loop.fs_stat, vim.api.nvim_buf_get_name(buf))
+                        if ok and stats and stats.size > max_filesize then
+                            return true
+                        end
+                        
+                        -- Also disable based on line count
+                        local line_count = vim.api.nvim_buf_line_count(buf)
+                        return line_count > 4000
+                    end,
+                },
                 indent = { enable = true },
                 ensure_installed = {
                     "vue",

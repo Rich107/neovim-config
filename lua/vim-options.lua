@@ -11,7 +11,23 @@ vim.opt.foldmethod = "expr"
 vim.opt.foldexpr = "nvim_treesitter#foldexpr()"
 vim.opt.foldlevel = 99
 vim.opt.foldlevelstart = 99
-local keymap = vim.keymap -- for conciseness vim.o.wrap = false vim.diagnostic.config({ virtual_text = true, }) vim.opt.swapfile = false
+
+-- Create autocommand to switch folding method for large files
+vim.api.nvim_create_autocmd("BufReadPost", {
+    pattern = "*",
+    callback = function(args)
+        local line_count = vim.api.nvim_buf_line_count(args.buf)
+        if line_count > 4000 then
+            -- For large files, use manual folding
+            vim.opt_local.foldmethod = "manual"
+        end
+    end
+})
+
+local keymap = vim.keymap -- for conciseness 
+vim.o.wrap = false 
+vim.diagnostic.config({ virtual_text = true, }) 
+vim.opt.swapfile = false
 -- Makes breakpoingts clearer
 vim.fn.sign_define("DapBreakpoint", {
 	text = "🛑",

@@ -13,4 +13,6 @@ vim.opt.rtp:prepend(lazypath)
 
 require("vim-options")
 require("macros")
+-- Initialize large file detection module
+require("utils.largefile").setup()
 require("lazy").setup("plugins")
