@@ -80,6 +80,9 @@ return {
 			keymap.set("n", "<leader>tr", function()
 				require("plugins.telescope.justfile-picker").pick_just_recipe()
 			end, { desc = "Pick and run Just recipe in tmux" })
+			keymap.set("n", "<leader>tp", function()
+				require("plugins.telescope.pr-label-picker").pick_pr_by_label()
+			end, { desc = "Pick PRs by label" })
 			keymap.set("n", "<leader>tR", builtin.resume, { desc = "Resume last Telescope search" })
 			keymap.set("n", "<leader>ts", builtin.live_grep, { desc = "Find string in cwd" })
 			
