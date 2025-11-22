@@ -7,8 +7,8 @@ function M.pick_pr_by_label()
 	local actions = require("telescope.actions")
 	local action_state = require("telescope.actions.state")
 
-	-- Get labels from the repo
-	local handle = io.popen("gh label list --json name,description --jq '.[] | .name + \"\\t\" + (.description // \"\")'")
+	-- Get labels from the repo (--limit 100 to get more than default 30)
+	local handle = io.popen("gh label list --limit 100 --json name,description --jq '.[] | .name + \"\\t\" + (.description // \"\")'")
 	if not handle then
 		vim.notify("Failed to fetch labels", vim.log.levels.ERROR)
 		return
