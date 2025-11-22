@@ -37,18 +37,46 @@ local function find_base_branch()
     return nil
 end
 
+-- Function to sanitize branch name for git
+local function sanitize_branch_name(name)
+    if not name then return nil end
+    
+    -- Trim whitespace from beginning and end
+    name = name:match("^%s*(.-)%s*$")
+    
+    -- Replace internal spaces with hyphens
+    name = name:gsub("%s+", "-")
+    
+    -- Remove any characters that might cause issues with git branch names
+    -- Keep alphanumerics, hyphens, underscores and dots
+    name = name:gsub("[^%w%-_%.]+", "")
+    
+    return name
+end
+
 -- Function to create a new branch from the base branch
 local function create_branch_from_base(branch_name)
-    if branch_name == nil or branch_name == "" then
-        vim.notify("Branch name cannot be empty", vim.log.levels.ERROR)
+    -- Sanitize branch name
+    local sanitized_name = sanitize_branch_name(branch_name)
+    
+    if not sanitized_name or sanitized_name == "" then
+        vim.notify("Branch name cannot be empty or contains only invalid characters", vim.log.levels.ERROR)
         return false
     end
+    
     -- Find the base branch
     local base_branch = find_base_branch()
     if base_branch == nil then
         return false
     end
-    vim.notify("Creating branch '" .. branch_name .. "' from '" .. base_branch .. "'", vim.log.levels.INFO)
+    
+    -- Show original vs sanitized name if they differ
+    if branch_name ~= sanitized_name then
+        vim.notify("Creating branch '" .. sanitized_name .. "' (sanitized from '" .. branch_name .. "') from '" .. base_branch .. "'", vim.log.levels.INFO)
+    else
+        vim.notify("Creating branch '" .. sanitized_name .. "' from '" .. base_branch .. "'", vim.log.levels.INFO)
+    end
+    
     -- Pull latest changes from the base branch
     local pull_cmd = "git fetch origin " .. base_branch .. " && git checkout " .. base_branch .. " && git pull origin " .. base_branch
     local pull_result = vim.fn.system(pull_cmd)
@@ -56,14 +84,16 @@ local function create_branch_from_base(branch_name)
         vim.notify("Failed to update base branch: " .. pull_result, vim.log.levels.ERROR)
         return false
     end
+    
     -- Create and checkout the new branch
-    local create_cmd = "git checkout -b " .. branch_name
+    local create_cmd = "git checkout -b " .. vim.fn.shellescape(sanitized_name)
     local create_result = vim.fn.system(create_cmd)
     if vim.v.shell_error ~= 0 then
         vim.notify("Failed to create new branch: " .. create_result, vim.log.levels.ERROR)
         return false
     end
-    vim.notify("Successfully created and switched to branch '" .. branch_name .. "'", vim.log.levels.INFO)
+    
+    vim.notify("Successfully created and switched to branch '" .. sanitized_name .. "'", vim.log.levels.INFO)
     return true
 end
 
@@ -75,9 +105,10 @@ function M.show_branch_creator()
         vim.notify("Not in a git repository", vim.log.levels.ERROR)
         return
     end
+    
     -- Show input prompt for the branch name
     vim.ui.input(
-        { prompt = "New branch name: " },
+        { prompt = "New branch name (spaces will be converted to hyphens): " },
         function(branch_name)
             if branch_name and branch_name ~= "" then
                 create_branch_from_base(branch_name)
