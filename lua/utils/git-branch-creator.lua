@@ -86,7 +86,7 @@ local function create_branch_from_base(branch_name)
     end
     
     -- Create and checkout the new branch
-    local create_cmd = "git checkout -b " .. vim.fn.shellescape(sanitized_name)
+    local create_cmd = "git checkout -b " .. sanitized_name
     local create_result = vim.fn.system(create_cmd)
     if vim.v.shell_error ~= 0 then
         vim.notify("Failed to create new branch: " .. create_result, vim.log.levels.ERROR)
