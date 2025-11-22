@@ -340,6 +340,10 @@ end, {})
 
 vim.keymap.set("n", "<leader>gbc", ":CopyBranch<CR>", { noremap = true, silent = true })
 
+-- Create new git branch from production/main/master
+vim.keymap.set("n", "<leader>gbr", function() require("utils.git-branch-creator").show_branch_creator() end, 
+    { noremap = true, silent = true, desc = "Create new git branch from base branch" })
+
 vim.diagnostic.config({ virtual_text = false, virtual_lines = { current_line = true } })
 
 local yank_path = function()
