@@ -83,9 +83,6 @@ return {
 			keymap.set("n", "<leader>tp", function()
 				require("plugins.telescope.pr-label-picker").pick_pr_by_label()
 			end, { desc = "Pick PRs by label" })
-			keymap.set("n", "<leader>tP", function()
-				require("plugins.telescope.pr-checkout").checkout_pr_by_label_prefix()
-			end, { desc = "Checkout PR by label prefix" })
 			keymap.set("n", "<leader>tR", builtin.resume, { desc = "Resume last Telescope search" })
 			keymap.set("n", "<leader>ts", builtin.live_grep, { desc = "Find string in cwd" })
 			
