@@ -60,6 +60,44 @@ function M.pick_pr_by_label()
 		:find()
 end
 
+-- Helper function to get CI status for a PR
+local function get_ci_status(pr_number)
+	local handle = io.popen(string.format('gh pr view %s --json statusCheckRollup 2>/dev/null', pr_number))
+	if not handle then
+		return nil, ""
+	end
+	
+	local output = handle:read("*a")
+	handle:close()
+	
+	if not output or output == "" then
+		return nil, ""
+	end
+	
+	-- Parse the JSON to check for status checks
+	local has_checks = output:match('"statusCheckRollup":%[.-%]')
+	if not has_checks or output:match('"statusCheckRollup":%[%]') then
+		-- No checks configured or empty array
+		return nil, ""
+	end
+	
+	-- Count different states
+	local success_count = select(2, output:gsub('"state":"SUCCESS"', ''))
+	local failure_count = select(2, output:gsub('"state":"FAILURE"', ''))
+	local pending_count = select(2, output:gsub('"state":"PENDING"', ''))
+	local error_count = select(2, output:gsub('"state":"ERROR"', ''))
+	
+	if failure_count > 0 or error_count > 0 then
+		return "failing", "✗ "
+	elseif pending_count > 0 then
+		return "pending", "◐ "
+	elseif success_count > 0 then
+		return "passing", "✓ "
+	end
+	
+	return nil, ""
+end
+
 function M.show_prs_with_label(label)
 	local pickers = require("telescope.pickers")
 	local finders = require("telescope.finders")
@@ -84,6 +122,14 @@ function M.show_prs_with_label(label)
 	for line in handle:lines() do
 		local number, title, author, branch, state, body = line:match("([^\t]+)\t([^\t]+)\t([^\t]+)\t([^\t]+)\t([^\t]+)\t?(.*)")
 		if number then
+			-- Get CI status for this PR
+			local ci_status, ci_icon = get_ci_status(number)
+			
+			-- Only show icon if we have actual CI status
+			local display_text = ci_icon ~= "" 
+				and string.format("#%s %s%s (%s)", number, ci_icon, title, author)
+				or string.format("#%s %s (%s)", number, title, author)
+			
 			table.insert(prs, {
 				number = number,
 				title = title,
@@ -91,7 +137,9 @@ function M.show_prs_with_label(label)
 				branch = branch,
 				state = state,
 				body = body or "",
-				display = string.format("#%s %s (%s)", number, title, author),
+				ci_status = ci_status,
+				ci_icon = ci_icon,
+				display = display_text,
 			})
 		end
 	end
@@ -126,10 +174,17 @@ function M.show_prs_with_label(label)
 						"Author: " .. pr.author,
 						"Branch: " .. pr.branch,
 						"State: " .. pr.state,
-						"",
-						"Description:",
-						string.rep("-", 40),
 					}
+					
+					-- Only show CI status if it exists
+					if pr.ci_status then
+						local ci_display = pr.ci_icon .. pr.ci_status:upper()
+						table.insert(lines, "CI Status: " .. ci_display)
+					end
+					
+					table.insert(lines, "")
+					table.insert(lines, "Description:")
+					table.insert(lines, string.rep("-", 40))
 
 					if pr.body and pr.body ~= "" then
 						for _, body_line in ipairs(vim.split(pr.body, "\n")) do
