@@ -142,9 +142,30 @@ return {
 				vim.cmd("startinsert")
 			end
 			
-			-- Create the command and keymap
-			vim.api.nvim_create_user_command("CreateGitBranch", create_git_branch, {})
-			vim.keymap.set("n", "<leader>cgb", create_git_branch, { desc = "Create git branch (spell-checked)" })
+		-- Create the command and keymap
+		vim.api.nvim_create_user_command("CreateGitBranch", create_git_branch, {})
+		vim.keymap.set("n", "<leader>cgb", create_git_branch, { desc = "Create git branch (spell-checked)" })
+		
+		-- Git push and pull commands
+		vim.keymap.set("n", "<leader>gp", function()
+			print("Pushing to remote...")
+			local result = vim.fn.systemlist("git push")
+			if vim.v.shell_error == 0 then
+				print("Push successful!")
+			else
+				print("Push failed: " .. table.concat(result, "\n"))
+			end
+		end, { desc = "Git push" })
+		
+		vim.keymap.set("n", "<leader>gl", function()
+			print("Pulling from remote...")
+			local result = vim.fn.systemlist("git pull")
+			if vim.v.shell_error == 0 then
+				print("Pull successful!")
+			else
+				print("Pull failed: " .. table.concat(result, "\n"))
+			end
+		end, { desc = "Git pull" })
 		end,
 	},
 }
