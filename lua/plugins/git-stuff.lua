@@ -74,6 +74,77 @@ return {
 				vim.cmd("Gitsigns detach")
 				vim.notify("GitSigns disabled for this buffer")
 			end, {})
+			
+			-- Create git branch with spell checking
+			local function create_git_branch()
+				-- Create a floating window
+				local buf = vim.api.nvim_create_buf(false, true)
+				local width = 60
+				local height = 3
+				
+			local win = vim.api.nvim_open_win(buf, true, {
+				relative = "editor",
+				width = width,
+				height = height,
+				col = (vim.o.columns - width) / 2,
+				row = (vim.o.lines - height) / 2,
+				style = "minimal",
+				border = "rounded",
+				title = " Create Git Branch ",
+				title_pos = "center",
+			})
+			
+			-- Enable spell checking in the window
+			vim.api.nvim_win_set_option(win, "spell", true)
+			vim.api.nvim_win_set_option(win, "spelllang", "en")
+				
+				-- Set buffer options
+				vim.api.nvim_set_option_value("buftype", "prompt", { buf = buf })
+				vim.fn.prompt_setprompt(buf, "Branch: ")
+				
+			-- Function to create the branch
+			local function do_create_branch()
+				local lines = vim.api.nvim_buf_get_lines(buf, 0, -1, false)
+				local input = lines[1]:gsub("^Branch: ", "")
+				
+				-- Trim whitespace from edges
+				input = input:gsub("^%s*(.-)%s*$", "%1")
+				
+				if input == "" then
+					vim.api.nvim_win_close(win, true)
+					vim.notify("Branch name cannot be empty", vim.log.levels.WARN)
+					return
+				end
+				
+				-- Replace spaces with hyphens
+				local branch_name = input:gsub("%s+", "-")
+				
+				-- Close the window
+				vim.api.nvim_win_close(win, true)
+				
+				-- Create the branch
+				local result = vim.fn.systemlist("git checkout -b " .. vim.fn.shellescape(branch_name))
+				
+				if vim.v.shell_error == 0 then
+					vim.notify("Created and switched to branch: " .. branch_name, vim.log.levels.INFO)
+				else
+					vim.notify("Failed to create branch: " .. table.concat(result, "\n"), vim.log.levels.ERROR)
+				end
+			end
+				
+				-- Set up keymaps for the prompt buffer
+				vim.keymap.set("i", "<CR>", do_create_branch, { buffer = buf })
+				vim.keymap.set("i", "<Esc>", function()
+					vim.api.nvim_win_close(win, true)
+				end, { buffer = buf })
+				
+				-- Start in insert mode
+				vim.cmd("startinsert")
+			end
+			
+			-- Create the command and keymap
+			vim.api.nvim_create_user_command("CreateGitBranch", create_git_branch, {})
+			vim.keymap.set("n", "<leader>cgb", create_git_branch, { desc = "Create git branch (spell-checked)" })
 		end,
 	},
 }
