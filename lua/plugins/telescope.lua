@@ -171,62 +171,19 @@ return {
 								return
 							end
 							
-							-- Close the picker first
-							actions.close(prompt_bufnr)
+							-- Try to delete the branch (force delete) without closing picker
+							local result = vim.fn.system("git branch -D " .. vim.fn.shellescape(local_branch))
 							
-							-- Confirm deletion
-							vim.ui.select(
-								{"Yes", "No"},
-								{
-									prompt = "Delete branch '" .. local_branch .. "'?",
-								},
-								function(choice)
-									if choice == "Yes" then
-										-- Try to delete the branch
-										local result = vim.fn.system("git branch -d " .. vim.fn.shellescape(local_branch))
-										
-										if vim.v.shell_error ~= 0 then
-											-- If -d fails, ask if they want to force delete
-											vim.ui.select(
-												{"Yes", "No"},
-												{
-													prompt = "Branch not fully merged. Force delete?",
-												},
-												function(force_choice)
-													if force_choice == "Yes" then
-														local force_result = vim.fn.system("git branch -D " .. vim.fn.shellescape(local_branch))
-														if vim.v.shell_error == 0 then
-															vim.notify("Force deleted branch: " .. local_branch, vim.log.levels.INFO)
-															-- Reopen the picker
-															vim.schedule(function()
-																vim.cmd("Telescope git_branches")
-															end)
-														else
-															vim.notify("Failed to delete branch: " .. force_result, vim.log.levels.ERROR)
-														end
-													else
-														-- User cancelled force delete, reopen picker
-														vim.schedule(function()
-															vim.cmd("Telescope git_branches")
-														end)
-													end
-												end
-											)
-										else
-											vim.notify("Deleted branch: " .. local_branch, vim.log.levels.INFO)
-											-- Reopen the picker
-											vim.schedule(function()
-												vim.cmd("Telescope git_branches")
-											end)
-										end
-									else
-										-- User cancelled deletion, reopen picker
-										vim.schedule(function()
-											vim.cmd("Telescope git_branches")
-										end)
-									end
-								end
-							)
+							if vim.v.shell_error == 0 then
+								vim.notify("Deleted branch: " .. local_branch, vim.log.levels.INFO)
+								-- Close and reopen to refresh the list
+								actions.close(prompt_bufnr)
+								vim.schedule(function()
+									vim.fn.feedkeys(vim.api.nvim_replace_termcodes("<leader>tb", true, false, true), "n")
+								end)
+							else
+								vim.notify("Failed to delete branch: " .. result, vim.log.levels.ERROR)
+							end
 						end
 						
 						-- Map Ctrl+x in both insert and normal mode
