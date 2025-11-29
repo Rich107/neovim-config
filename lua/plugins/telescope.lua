@@ -131,10 +131,12 @@ return {
 			keymap.set("n", "<leader>tb", function()
 				builtin.git_branches({ 
 					previewer = false,
+					prompt_title = "Git Branches (<CR>: checkout | <C-x>: delete)",
 					attach_mappings = function(prompt_bufnr, map)
 						local actions = require("telescope.actions")
 						local action_state = require("telescope.actions.state")
 						
+						-- Replace default action to checkout branch
 						actions.select_default:replace(function()
 							local selection = action_state.get_selected_entry()
 							actions.close(prompt_bufnr)
@@ -147,6 +149,89 @@ return {
 							-- Check out the branch by name, not commit
 							vim.cmd("Git checkout " .. vim.fn.shellescape(local_branch))
 						end)
+						
+						-- Add Ctrl+x mapping to delete branch
+						local function delete_branch()
+							local selection = action_state.get_selected_entry()
+							if not selection then
+								vim.notify("No branch selected", vim.log.levels.WARN)
+								return
+							end
+							
+							local branch_name = selection.value
+							-- Remove "origin/" prefix if present
+							local local_branch = branch_name:gsub("^origin/", "")
+							
+							-- Get current branch
+							local current_branch = vim.fn.systemlist("git branch --show-current")[1]
+							
+							-- Check if trying to delete current branch
+							if local_branch == current_branch then
+								vim.notify("Cannot delete current branch: " .. local_branch, vim.log.levels.ERROR)
+								return
+							end
+							
+							-- Close the picker first
+							actions.close(prompt_bufnr)
+							
+							-- Confirm deletion
+							vim.ui.select(
+								{"Yes", "No"},
+								{
+									prompt = "Delete branch '" .. local_branch .. "'?",
+								},
+								function(choice)
+									if choice == "Yes" then
+										-- Try to delete the branch
+										local result = vim.fn.system("git branch -d " .. vim.fn.shellescape(local_branch))
+										
+										if vim.v.shell_error ~= 0 then
+											-- If -d fails, ask if they want to force delete
+											vim.ui.select(
+												{"Yes", "No"},
+												{
+													prompt = "Branch not fully merged. Force delete?",
+												},
+												function(force_choice)
+													if force_choice == "Yes" then
+														local force_result = vim.fn.system("git branch -D " .. vim.fn.shellescape(local_branch))
+														if vim.v.shell_error == 0 then
+															vim.notify("Force deleted branch: " .. local_branch, vim.log.levels.INFO)
+															-- Reopen the picker
+															vim.schedule(function()
+																vim.cmd("Telescope git_branches")
+															end)
+														else
+															vim.notify("Failed to delete branch: " .. force_result, vim.log.levels.ERROR)
+														end
+													else
+														-- User cancelled force delete, reopen picker
+														vim.schedule(function()
+															vim.cmd("Telescope git_branches")
+														end)
+													end
+												end
+											)
+										else
+											vim.notify("Deleted branch: " .. local_branch, vim.log.levels.INFO)
+											-- Reopen the picker
+											vim.schedule(function()
+												vim.cmd("Telescope git_branches")
+											end)
+										end
+									else
+										-- User cancelled deletion, reopen picker
+										vim.schedule(function()
+											vim.cmd("Telescope git_branches")
+										end)
+									end
+								end
+							)
+						end
+						
+						-- Map Ctrl+x in both insert and normal mode
+						map("i", "<C-x>", delete_branch)
+						map("n", "<C-x>", delete_branch)
 						
 						return true
 					end
