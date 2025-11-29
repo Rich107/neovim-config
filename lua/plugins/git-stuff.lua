@@ -112,6 +112,7 @@ return {
 				
 				if input == "" then
 					vim.api.nvim_win_close(win, true)
+					vim.api.nvim_buf_delete(buf, { force = true })
 					vim.notify("Branch name cannot be empty", vim.log.levels.WARN)
 					return
 				end
@@ -119,8 +120,9 @@ return {
 				-- Replace spaces with hyphens
 				local branch_name = input:gsub("%s+", "-")
 				
-				-- Close the window
+				-- Close the window and delete the buffer
 				vim.api.nvim_win_close(win, true)
+				vim.api.nvim_buf_delete(buf, { force = true })
 				
 				-- Create the branch
 				local result = vim.fn.systemlist("git checkout -b " .. vim.fn.shellescape(branch_name))
@@ -136,6 +138,7 @@ return {
 				vim.keymap.set("i", "<CR>", do_create_branch, { buffer = buf })
 				vim.keymap.set("i", "<Esc>", function()
 					vim.api.nvim_win_close(win, true)
+					vim.api.nvim_buf_delete(buf, { force = true })
 				end, { buffer = buf })
 				
 				-- Start in insert mode
