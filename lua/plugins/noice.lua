@@ -35,7 +35,30 @@ return {
 							{ event = "msg_show", find = "checktime" },
 							{ event = "msg_show", find = "Resume" },
 							{ event = "msg_showcmd" },
+							{ event = "msg_show", find = "%.edit" },
+							{ event = "msg_show", find = "/private/var/folders" },
 						},
+					},
+					opts = { skip = true },
+				},
+				{
+					filter = {
+						event = "cmdline",
+						find = "redraw",
+					},
+					opts = { skip = true },
+				},
+				{
+					filter = {
+						event = "cmdline",
+						find = "call delete",
+					},
+					opts = { skip = true },
+				},
+				{
+					filter = {
+						event = "cmdline",
+						find = "fugitive",
 					},
 					opts = { skip = true },
 				},
