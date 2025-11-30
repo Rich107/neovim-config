@@ -24,21 +24,13 @@ return {
 			routes = {
 				{
 					filter = {
-						event = "msg_show",
-						find = "call delete",
-					},
-					opts = { skip = true },
-				},
-				{
-					filter = {
-						event = "msg_show",
-						find = "fugitive#Resume",
-					},
-					opts = { skip = true },
-				},
-				{
-					filter = {
-						event = "msg_showcmd",
+						any = {
+							{ event = "msg_show", find = "redraw" },
+							{ event = "msg_show", find = "call delete" },
+							{ event = "msg_show", find = "fugitive" },
+							{ event = "msg_show", find = "checktime" },
+							{ event = "msg_showcmd" },
+						},
 					},
 					opts = { skip = true },
 				},
