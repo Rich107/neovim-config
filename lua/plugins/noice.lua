@@ -23,7 +23,7 @@ return {
 				view = "cmdline_popup",
 			},
 			messages = {
-				enabled = false, -- disable noice messages
+				enabled = false, -- disable noice messages.
 			},
 			routes = {
 				{
