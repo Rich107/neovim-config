@@ -170,6 +170,44 @@ return {
 			end
 		end, { desc = "Git pull" })
 		
+		-- Auto command to open commit messages in floating window
+		vim.api.nvim_create_autocmd("FileType", {
+			pattern = "gitcommit",
+			callback = function()
+				local buf = vim.api.nvim_get_current_buf()
+				local current_win = vim.api.nvim_get_current_win()
+				
+				-- Only convert to floating if it's not already floating
+				local win_config = vim.api.nvim_win_get_config(current_win)
+				if win_config.relative == "" then
+					-- Calculate window size (80% of editor)
+					local width = math.floor(vim.o.columns * 0.8)
+					local height = math.floor(vim.o.lines * 0.8)
+					local row = math.floor((vim.o.lines - height) / 2)
+					local col = math.floor((vim.o.columns - width) / 2)
+					
+					-- Close current window
+					vim.api.nvim_win_close(current_win, false)
+					
+					-- Open as floating window
+					vim.api.nvim_open_win(buf, true, {
+						relative = "editor",
+						width = width,
+						height = height,
+						row = row,
+						col = col,
+						style = "minimal",
+						border = "rounded",
+						title = " Git Commit ",
+						title_pos = "center",
+					})
+				end
+				
+				-- Disable <Esc> from closing the window
+				vim.keymap.set("n", "<Esc>", "<Nop>", { buffer = buf, silent = true })
+			end,
+		})
+		
 		vim.keymap.set("n", "<leader>gc", "<cmd>Git commit<CR>", { desc = "Git commit", silent = true })
 		end,
 	},
