@@ -7,13 +7,6 @@ local function log_variable()
 	)
 end
 
--- vim.api.nvim_set_keymap("n", "<leader>L", "", {
--- 	noremap = true,
--- 	silent = true,
--- 	callback = log_variable,
--- 	desc = "Log variable to console for js",
--- })
-
 vim.api.nvim_set_keymap("v", "<leader>L", "", {
 	noremap = true,
 	silent = true,
