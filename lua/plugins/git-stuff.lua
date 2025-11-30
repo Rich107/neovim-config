@@ -180,11 +180,11 @@ return {
 				-- Only convert to floating if it's not already floating
 				local win_config = vim.api.nvim_win_get_config(current_win)
 				if win_config.relative == "" then
-					-- Calculate window size (80% of editor)
-					local width = math.floor(vim.o.columns * 0.8)
-					local height = math.floor(vim.o.lines * 0.8)
-					local row = math.floor((vim.o.lines - height) / 2)
-					local col = math.floor((vim.o.columns - width) / 2)
+					-- Calculate window size (100% of editor)
+					local width = vim.o.columns
+					local height = vim.o.lines
+					local row = 0
+					local col = 0
 					
 					-- Close current window
 					vim.api.nvim_win_close(current_win, false)
