@@ -23,7 +23,7 @@ return {
 						".git/",
 						-- ".git/*",
 					},
-					-- Customizing path display to show only the filename and first two parent folders
+					-- Customizing path display to show only the filename and first two parent folders.
 					path_display = function(opts, path)
 						local tail = require("telescope.utils").path_tail(path)
 						local dirs = vim.split(vim.fn.fnamemodify(path, ":.:h"), "/")
