@@ -169,6 +169,8 @@ return {
 				print("Pull failed: " .. table.concat(result, "\n"))
 			end
 		end, { desc = "Git pull" })
+		
+		vim.keymap.set("n", "<leader>gc", ":Git commit<CR>", { desc = "Git commit" })
 		end,
 	},
 }
