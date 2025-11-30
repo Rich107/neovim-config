@@ -26,6 +26,14 @@ return {
 					filter = {
 						event = "msg_show",
 						kind = "",
+						find = "fugitive",
+					},
+					opts = { skip = true },
+				},
+				{
+					filter = {
+						event = "msg_show",
+						kind = "",
 						find = "redraw",
 					},
 					opts = { skip = true },
