@@ -19,7 +19,8 @@ return {
 
 		require("noice").setup({
 			cmdline = {
-				enabled = false, -- disable noice cmdline completely
+				enabled = true,
+				view = "cmdline_popup",
 			},
 			messages = {
 				enabled = false, -- disable noice messages
@@ -34,12 +35,15 @@ return {
 							{ event = "msg_show", find = "checktime" },
 							{ event = "msg_show", find = "Resume" },
 							{ event = "msg_showcmd" },
-							{ event = "cmdline", find = "redraw" },
-							{ event = "cmdline", find = "call delete" },
-							{ event = "cmdline", find = "fugitive" },
 						},
 					},
 					opts = { skip = true },
+				},
+				{
+					filter = {
+						event = "cmdline",
+					},
+					view = "cmdline_popup",
 				},
 			},
 			sections = {
