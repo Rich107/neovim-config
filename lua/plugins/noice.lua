@@ -25,16 +25,20 @@ return {
 				{
 					filter = {
 						event = "msg_show",
-						kind = "",
-						find = "fugitive",
+						find = "call delete",
 					},
 					opts = { skip = true },
 				},
 				{
 					filter = {
 						event = "msg_show",
-						kind = "",
-						find = "redraw",
+						find = "fugitive#Resume",
+					},
+					opts = { skip = true },
+				},
+				{
+					filter = {
+						event = "msg_showcmd",
 					},
 					opts = { skip = true },
 				},
