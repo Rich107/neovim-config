@@ -21,12 +21,16 @@ return {
 			messages = {
 				enabled = false, -- disable noice messages
 			},
-			-- routes = {
-			-- 	{
-			-- 		view = "notify",
-			-- 		filter = { event = "msg_showmode" },
-			-- 	},
-			-- },
+			routes = {
+				{
+					filter = {
+						event = "msg_show",
+						kind = "",
+						find = "redraw",
+					},
+					opts = { skip = true },
+				},
+			},
 			sections = {
 				messages = {
 					enabled = false, -- enables the Noice messages UI

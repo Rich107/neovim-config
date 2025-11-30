@@ -170,7 +170,7 @@ return {
 			end
 		end, { desc = "Git pull" })
 		
-		vim.keymap.set("n", "<leader>gc", "<cmd>Git commit<CR>", { desc = "Git commit" })
+		vim.keymap.set("n", "<leader>gc", "<cmd>Git commit<CR>", { desc = "Git commit", silent = true })
 		end,
 	},
 }
