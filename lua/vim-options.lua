@@ -4,7 +4,7 @@ vim.cmd("set softtabstop=4")
 vim.cmd("set shiftwidth=4")
 vim.g.mapleader = " "
 vim.g.background = "light"
-vim.opt.cmdheight = 2
+vim.opt.cmdheight = 1
 
 -- Folding configuration
 vim.opt.foldenable = true
