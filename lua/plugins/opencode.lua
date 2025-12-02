@@ -22,7 +22,7 @@ return {
 	dependencies = { "folke/snacks.nvim" },
 	---@type require('opencode').Config
 	opts = {
-		-- port = 60601,
+		port = 60601,
 	},
     -- stylua: ignore
     keys = {
