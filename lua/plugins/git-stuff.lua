@@ -50,18 +50,18 @@ return {
 				-- Don't use current line blame by default
 				current_line_blame = false,
 				
-				-- Disable if file is larger than threshold
-				attach_to_untracked = false,
-				
-				-- Custom attach handler
-				_loading_gitsigns_custom_attach = function(bufnr)
-					-- Check line count
-					local line_count = vim.api.nvim_buf_line_count(bufnr)
-					if line_count > 4000 then
-						return false -- Don't attach
-					end
-					return true -- Attach as normal
+			-- Disable if file is larger than threshold
+			attach_to_untracked = false,
+			
+			-- Custom attach handler to check file size
+			on_attach = function(bufnr)
+				-- Check line count
+				local line_count = vim.api.nvim_buf_line_count(bufnr)
+				if line_count > 4000 then
+					return false -- Don't attach
 				end
+				return true -- Attach as normal
+			end
 			})
 			
 			-- Add keymaps

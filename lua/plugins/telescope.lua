@@ -83,8 +83,7 @@ return {
 			keymap.set("n", "<leader>tp", function()
 				require("plugins.telescope.pr-label-picker").pick_pr_by_label()
 			end, { desc = "Pick PRs by label" })
-			keymap.set("n", "<leader>tP", function()
-			keymap.set("n", "<leader>tR", builtin.resume, { desc = "Resume last Telescope search" })
+		keymap.set("n", "<leader>tR", builtin.resume, { desc = "Resume last Telescope search" })
 			keymap.set("n", "<leader>ts", builtin.live_grep, { desc = "Find string in cwd" })
 			
 			keymap.set("v", "<leader>ts", function()
@@ -332,10 +331,11 @@ return {
 										elseif line:match("^Commit:") or line:match("^Date:") or line:match("^Author:") or line:match("^Title:") then
 											-- Header info in bold
 											vim.api.nvim_buf_add_highlight(self.state.bufnr, ns_id, "Title", i-1, 0, -1)
-										elseif line:match("^  ") then
-											-- Commit body (indented) in a softer color
-											vim.api.nvim_buf_add_highlight(self.state.bufnr, ns_id, "Comment", i-1, 0, -1)											end
-										end
+									elseif line:match("^  ") then
+										-- Commit body (indented) in a softer color
+										vim.api.nvim_buf_add_highlight(self.state.bufnr, ns_id, "Comment", i-1, 0, -1)
+									end
+								end
 									else
 										-- If no diff (maybe first commit), show the full file
 										local cmd_show = string.format(
