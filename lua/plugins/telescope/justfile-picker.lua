@@ -130,6 +130,24 @@ end
 -- Table to store terminal buffer IDs for each recipe
 local terminal_buffers = {}
 
+-- Function to detect the best available shell (prioritizing zsh)
+local function get_preferred_shell()
+	-- First, check if zsh is available
+	local zsh_check = vim.fn.system("which zsh 2>/dev/null")
+	if vim.v.shell_error == 0 and zsh_check ~= "" then
+		return "zsh"
+	end
+	
+	-- Fall back to $SHELL environment variable
+	local shell_env = vim.fn.getenv("SHELL")
+	if shell_env ~= vim.NIL and shell_env ~= "" then
+		return shell_env
+	end
+	
+	-- Final fallback to bash
+	return "bash"
+end
+
 -- Function to run a Just command in Neovim terminal with custom command
 local function run_in_neovim_terminal_with_cmd(display_name, just_cmd, recipe_name)
 	local buf_name = "just-" .. display_name
@@ -221,9 +239,10 @@ local function run_recipe(recipe_name)
 		vim.notify(string.format("Reusing existing tmux window 'just-%s'", display_name), vim.log.levels.INFO)
 	else
 		-- Create a new window with a shell that runs the command and stays open
+		local preferred_shell = get_preferred_shell()
 		local create_cmd = string.format(
-			"tmux new-window -n '%s' 'echo \"Running: %s %s\"; echo \"===================\"; %s %s; echo \"\"; echo \"Command completed. Press Ctrl-C to exit or run more commands.\"; exec bash'",
-			window_name, just_cmd, actual_recipe, just_cmd, actual_recipe
+			"tmux new-window -n '%s' 'echo \"Running: %s %s\"; echo \"===================\"; %s %s; echo \"\"; echo \"Command completed. Press Ctrl-C to exit or run more commands.\"; exec %s'",
+			window_name, just_cmd, actual_recipe, just_cmd, actual_recipe, preferred_shell
 		)
 		vim.fn.system(create_cmd)
 		
