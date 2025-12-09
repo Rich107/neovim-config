@@ -327,3 +327,7 @@ OpenAPI
 keychain
 Hypercorn
 ASGI
+DynamoDB
+SimpleDB
+S3
+lifecycle
