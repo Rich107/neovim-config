@@ -171,25 +171,15 @@ return {
 				end,
 				["volar"] = function()
 					require("lspconfig").volar.setup({
-						-- NOTE: Uncomment to enable volar in file types other than vue.
-						-- (Similar to Takeover Mode)
-						-- IMPORTANT: Make sure ts_ls has a ts_ls.config.json and ts_ls.json file for your project!
-						-- filetypes = { "vue", "javascript", "typescript", "javascriptreact", "typescriptreact", "json" },
-
-						-- NOTE: Uncomment to restrict Volar to only Vue/Nuxt projects. This will enable Volar to work alongside other language servers (ts_ls).
-
-						-- root_dir = require("lspconfig").util.root_pattern(
-						--   "vue.config.js",
-						--   "vue.config.ts",
-						--   "nuxt.config.js",
-						--   "nuxt.config.ts"
-						-- ),
+						capabilities = capabilities,
+						-- NOTE: For Neovim 0.10+, Volar now works in hybrid mode with ts_ls
+						-- This allows both servers to work together for better TypeScript support
+						filetypes = { "vue" },
 						init_options = {
 							vue = {
-								hybridMode = false,
+								-- Enable hybrid mode for better integration with ts_ls
+								hybridMode = true,
 							},
-							-- NOTE: This might not be needed. Uncomment if you encounter issues.
-
 							typescript = {
 								tsdk = vim.fn.getcwd() .. "/node_modules/typescript/lib",
 							},
@@ -223,9 +213,9 @@ return {
 					local volar_path = mason_packages .. "/vue-language-server/node_modules/@vue/language-server"
 
 					require("lspconfig").ts_ls.setup({
-						-- NOTE: To enable hybridMode, change HybrideMode to true above and uncomment the following filetypes block.
-
-						-- filetypes = { "typescript", "javascript", "javascriptreact", "typescriptreact", "vue" },
+						capabilities = capabilities,
+						-- Enable ts_ls for Vue files in hybrid mode with Volar
+						filetypes = { "typescript", "javascript", "javascriptreact", "typescriptreact", "vue" },
 						init_options = {
 							plugins = {
 								{
