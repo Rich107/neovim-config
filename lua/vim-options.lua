@@ -51,6 +51,23 @@ vim.fn.sign_define("DapStopped", {
 local osc52 = require("vim.ui.clipboard.osc52")
 local path_utils = require("utils.path_utils")
 
+-- Set context-aware commentstring for Vue files (Neovim 0.10+ native commenting)
+-- Integrate ts-context-commentstring with native commenting
+local get_option = vim.filetype.get_option
+vim.filetype.get_option = function(filetype, option)
+	if option ~= "commentstring" then
+		return get_option(filetype, option)
+	end
+	
+	-- Use ts-context-commentstring for these filetypes
+	local ok, ts_commentstring = pcall(require, 'ts_context_commentstring.internal')
+	if ok then
+		return ts_commentstring.calculate_commentstring() or get_option(filetype, option)
+	end
+	
+	return get_option(filetype, option)
+end
+
 vim.api.nvim_create_autocmd({ "BufEnter", "TextChanged", "InsertLeave" }, {
 	pattern = "*.vue",
 	callback = function()

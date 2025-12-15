@@ -3,6 +3,9 @@ return {
         "nvim-treesitter/nvim-treesitter",
         build = ":TSUpdate",
         event = { "BufReadPost", "BufNewFile" },
+        dependencies = {
+            "JoosepAlviste/nvim-ts-context-commentstring",
+        },
         config = function()
             -- Setup treesitter configs with default settings
             require("nvim-treesitter.configs").setup({
@@ -81,7 +84,19 @@ return {
                     -- },
                 },
             })
+            
+            -- Setup context-aware commenting for Vue and other files
+            require('ts_context_commentstring').setup {
+                enable_autocmd = false,
+            }
+            
+            -- Integrate with native Neovim 0.10+ commenting
+            vim.g.skip_ts_context_commentstring_module = true
         end,
+    },
+    {
+        "JoosepAlviste/nvim-ts-context-commentstring",
+        lazy = true,
     },
     {
         "nvim-treesitter/nvim-treesitter-textobjects",
