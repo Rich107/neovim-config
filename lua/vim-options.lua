@@ -302,8 +302,11 @@ vim.api.nvim_create_autocmd("TextYankPost", {
 	end,
 })
 
+-- Open Diffview to see git changes across the project
 vim.keymap.set("n", "<leader>gdo", "<cmd>DiffviewOpen<CR>", { silent = true, desc = "Diff Split Open" })
+-- Close the Diffview panel
 vim.keymap.set("n", "<leader>gdc", "<cmd>DiffviewClose<CR>", { silent = true, desc = "Diff Split Close" })
+-- Open a 3-way diff split for resolving merge conflicts
 vim.keymap.set("n", "<leader>gds", "<cmd>Gdiffsplit!<CR>", { silent = true, desc = "Git Diff Split" })
 
 vim.api.nvim_set_keymap("n", "<C-d>", "<C-d>zz", { noremap = true, silent = true })
