@@ -6,6 +6,8 @@ vim.g.mapleader = " "
 vim.g.background = "light"
 vim.opt.cmdheight = 1
 
+-- Set default shell to zsh for terminal
+vim.opt.shell = "/bin/zsh"
 -- Folding configuration
 vim.opt.foldenable = true
 vim.opt.foldmethod = "expr"
