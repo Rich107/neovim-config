@@ -9,7 +9,7 @@ local previewers = require("telescope.previewers")
 
 -- Parse a single line from show_urls output
 local function parse_url_line(line, urlconf_name)
-	line = line:strip()
+	line = vim.trim(line)
 	if not line or line == "" or not line:match("^/") then
 		return nil
 	end
@@ -111,7 +111,7 @@ local function fetch_urls_from_urlconf(urlconf, urlconf_name, results)
 		-- Filter out JSON log messages from stderr
 		local has_error = false
 		for _, line in ipairs(output) do
-			if not line:match("^%s*{") and line:strip() ~= "" then
+			if not line:match("^%s*{") and vim.trim(line) ~= "" then
 				has_error = true
 				break
 			end
