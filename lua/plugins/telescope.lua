@@ -717,6 +717,9 @@ return {
 			keymap.set("n", "<leader>lu", function()
 				require("plugins.telescope.leg-url-search").leg_url_search()
 			end, { desc = "Django URL search" })
+			keymap.set("n", "<leader>fr", function()
+				require("plugins.telescope.fastapi-route-search").fastapi_route_search()
+			end, { desc = "FastAPI route search" })
 			keymap.set("n", "<leader>tn", function()
 				require("telescope.builtin").find_files({
 					cwd = vim.fn.stdpath("config"),
@@ -768,6 +771,15 @@ return {
 			vim.api.nvim_create_user_command("LegLurlSearchClearCache", function()
 				require("plugins.telescope.leg-url-search").clear_cache()
 			end, { desc = "Clear Django URL search cache" })
+
+			-- Register FastAPI route search commands
+			vim.api.nvim_create_user_command("FastapiRouteSearch", function()
+				require("plugins.telescope.fastapi-route-search").fastapi_route_search()
+			end, { desc = "Search FastAPI routes" })
+
+			vim.api.nvim_create_user_command("FastapiRouteSearchClearCache", function()
+				require("plugins.telescope.fastapi-route-search").clear_cache()
+			end, { desc = "Clear FastAPI route search cache" })
 		end,
 	},
 }
