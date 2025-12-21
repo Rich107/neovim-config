@@ -714,6 +714,9 @@ return {
 					:find()
 			end, { desc = "Git history for selected lines" })
 
+			keymap.set("n", "<leader>lu", function()
+				require("plugins.telescope.leg-url-search").leg_url_search()
+			end, { desc = "Django URL search" })
 			keymap.set("n", "<leader>tn", function()
 				require("telescope.builtin").find_files({
 					cwd = vim.fn.stdpath("config"),
@@ -755,6 +758,11 @@ return {
 			require("plugins.telescope.smartgrep").setup()
 			require("telescope").load_extension("ui-select")
 			require("telescope").load_extension("fzf")
+
+			-- Register LegLurlSearch command
+			vim.api.nvim_create_user_command("LegLurlSearch", function()
+				require("plugins.telescope.leg-url-search").leg_url_search()
+			end, { desc = "Search Django URLs across all URLconfs" })
 		end,
 	},
 }
