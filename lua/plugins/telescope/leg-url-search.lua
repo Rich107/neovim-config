@@ -7,6 +7,14 @@ local actions = require("telescope.actions")
 local action_state = require("telescope.actions.state")
 local previewers = require("telescope.previewers")
 
+-- Cache file path (in /tmp so it persists until container rebuild)
+local function get_cache_file_path()
+	local cwd = vim.fn.getcwd()
+	-- Create a hash of the cwd to make a unique cache file per project
+	local cwd_hash = vim.fn.sha256(cwd):sub(1, 16)
+	return "/tmp/nvim_django_urls_" .. cwd_hash .. ".json"
+end
+
 -- Parse a single line from show_urls output
 local function parse_url_line(line, urlconf_name)
 	line = vim.trim(line)
@@ -132,6 +140,42 @@ local function fetch_urls_from_urlconf(urlconf, urlconf_name, results)
 	end
 end
 
+-- Save URLs to cache file
+local function save_to_cache(url_entries)
+	local cache_file = get_cache_file_path()
+	local json_str = vim.fn.json_encode(url_entries)
+	local file = io.open(cache_file, "w")
+	if file then
+		file:write(json_str)
+		file:close()
+		return true
+	end
+	return false
+end
+
+-- Load URLs from cache file
+local function load_from_cache()
+	local cache_file = get_cache_file_path()
+	if vim.fn.filereadable(cache_file) == 0 then
+		return nil
+	end
+
+	local file = io.open(cache_file, "r")
+	if not file then
+		return nil
+	end
+
+	local content = file:read("*all")
+	file:close()
+
+	local success, url_entries = pcall(vim.fn.json_decode, content)
+	if success and url_entries then
+		return url_entries
+	end
+
+	return nil
+end
+
 -- Fetch all URLs from all URLconfs
 local function fetch_all_urls()
 	local results = {}
@@ -222,17 +266,28 @@ function M.leg_url_search()
 		return
 	end
 
-	vim.notify("Fetching URLs from all URLconfs...", vim.log.levels.INFO)
+	-- Try to load from cache first
+	local url_entries = load_from_cache()
+	
+	if url_entries then
+		vim.notify(string.format("Loaded %d URLs from cache", #url_entries), vim.log.levels.INFO)
+	else
+		-- Cache miss - fetch URLs
+		vim.notify("Fetching URLs from all URLconfs...", vim.log.levels.INFO)
+		url_entries = fetch_all_urls()
 
-	-- Fetch all URLs
-	local url_entries = fetch_all_urls()
+		if #url_entries == 0 then
+			vim.notify("No URLs found", vim.log.levels.WARN)
+			return
+		end
 
-	if #url_entries == 0 then
-		vim.notify("No URLs found", vim.log.levels.WARN)
-		return
+		-- Save to cache for next time
+		if save_to_cache(url_entries) then
+			vim.notify(string.format("Found and cached %d URLs", #url_entries), vim.log.levels.INFO)
+		else
+			vim.notify(string.format("Found %d URLs (cache save failed)", #url_entries), vim.log.levels.WARN)
+		end
 	end
-
-	vim.notify(string.format("Found %d URLs", #url_entries), vim.log.levels.INFO)
 
 	-- Create the picker
 	pickers
@@ -283,6 +338,17 @@ function M.leg_url_search()
 			end,
 		})
 		:find()
+end
+
+-- Function to clear the cache and rebuild
+function M.clear_cache()
+	local cache_file = get_cache_file_path()
+	if vim.fn.filereadable(cache_file) == 1 then
+		vim.fn.delete(cache_file)
+		vim.notify("Django URL cache cleared", vim.log.levels.INFO)
+	else
+		vim.notify("No cache file found", vim.log.levels.INFO)
+	end
 end
 
 return M

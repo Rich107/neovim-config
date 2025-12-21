@@ -763,6 +763,11 @@ return {
 			vim.api.nvim_create_user_command("LegLurlSearch", function()
 				require("plugins.telescope.leg-url-search").leg_url_search()
 			end, { desc = "Search Django URLs across all URLconfs" })
+
+			-- Register LegLurlSearchClearCache command
+			vim.api.nvim_create_user_command("LegLurlSearchClearCache", function()
+				require("plugins.telescope.leg-url-search").clear_cache()
+			end, { desc = "Clear Django URL search cache" })
 		end,
 	},
 }
