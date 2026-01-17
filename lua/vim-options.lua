@@ -372,3 +372,16 @@ end
 
 vim.keymap.set("n", "<leader>yp", yank_path, { noremap = true, silent = true, desc = "[y]ank full file [p]ath" })
 vim.keymap.set("n", "<C-y>", yank_path, { noremap = true, silent = true })
+
+-- Open current file location in Finder
+local open_in_finder = function()
+	local full_path = vim.fn.expand("%:p")
+	if full_path ~= "" then
+		vim.fn.system("open -R " .. vim.fn.shellescape(full_path))
+		print("Opened in Finder: " .. full_path)
+	else
+		print("No file to open in Finder")
+	end
+end
+
+vim.keymap.set("n", "<leader>of", open_in_finder, { noremap = true, silent = true, desc = "[o]pen in [f]inder" })
