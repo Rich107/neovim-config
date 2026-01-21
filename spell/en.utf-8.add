@@ -332,3 +332,5 @@ SimpleDB
 S3
 lifecycle
 justfiles
+LFS
+posthog
