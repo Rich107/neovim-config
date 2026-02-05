@@ -29,6 +29,14 @@ return {
 			desc = "harpoon quick menu",
 		},
 		{
+			"<leader>el",
+			function()
+				local harpoon = require("harpoon")
+				harpoon.ui:toggle_quick_menu(harpoon:list())
+			end,
+			desc = "harpoon quick menu",
+		},
+		{
 			"<A-h>",
 			function()
 				require("harpoon"):list():select(1)
