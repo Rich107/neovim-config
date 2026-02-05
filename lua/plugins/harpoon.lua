@@ -14,6 +14,13 @@ return {
 			desc = "harpoon file",
 		},
 		{
+			"<leader>a",
+			function()
+				require("harpoon"):list():add()
+			end,
+			desc = "harpoon file",
+		},
+		{
 			"<A-e>",
 			function()
 				local harpoon = require("harpoon")
