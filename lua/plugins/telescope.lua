@@ -720,6 +720,9 @@ return {
 			keymap.set("n", "<leader>fr", function()
 				require("plugins.telescope.fastapi-route-search").fastapi_route_search()
 			end, { desc = "FastAPI route search" })
+			keymap.set("n", "<leader>nr", function()
+				require("plugins.telescope.nestjs-route-search").nestjs_route_search()
+			end, { desc = "NestJS route search" })
 			keymap.set("n", "<leader>tn", function()
 				require("telescope.builtin").find_files({
 					cwd = vim.fn.stdpath("config"),
@@ -780,6 +783,15 @@ return {
 			vim.api.nvim_create_user_command("FastapiRouteSearchClearCache", function()
 				require("plugins.telescope.fastapi-route-search").clear_cache()
 			end, { desc = "Clear FastAPI route search cache" })
+
+			-- Register NestJS route search commands
+			vim.api.nvim_create_user_command("NestjsRouteSearch", function()
+				require("plugins.telescope.nestjs-route-search").nestjs_route_search()
+			end, { desc = "Search NestJS routes" })
+
+			vim.api.nvim_create_user_command("NestjsRouteSearchClearCache", function()
+				require("plugins.telescope.nestjs-route-search").clear_cache()
+			end, { desc = "Clear NestJS route search cache" })
 		end,
 	},
 }
