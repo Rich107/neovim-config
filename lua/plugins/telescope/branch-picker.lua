@@ -5,29 +5,32 @@ local finders = require("telescope.finders")
 local conf = require("telescope.config").values
 local actions = require("telescope.actions")
 local action_state = require("telescope.actions.state")
+local entry_display = require("telescope.pickers.entry_display")
 
--- Get branches sorted by most recent commit
+-- Get branches sorted by most recent commit with author and date
 local function get_branches(include_remote)
-	local cmd
-	if include_remote then
-		-- All branches (local + remote), sorted by committerdate
-		cmd = "git branch -a --sort=-committerdate --format='%(refname:short)'"
-	else
-		-- Local branches only, sorted by committerdate
-		cmd = "git branch --sort=-committerdate --format='%(refname:short)'"
-	end
+	local flag = include_remote and "-a" or ""
+	-- Format: branch name | author name | relative date
+	local format = "%(refname:short)|%(authorname)|%(committerdate:relative)"
+	local cmd = string.format("git branch %s --sort=-committerdate --format='%s'", flag, format)
 
 	local result = vim.fn.systemlist(cmd)
 	if vim.v.shell_error ~= 0 then
 		return {}
 	end
 
-	-- Filter out HEAD pointer and clean up
 	local branches = {}
-	for _, branch in ipairs(result) do
-		-- Skip HEAD pointer entries
-		if not branch:match("HEAD") and branch ~= "" then
-			table.insert(branches, branch)
+	for _, line in ipairs(result) do
+		-- Skip HEAD pointer entries and empty lines
+		if not line:match("HEAD") and line ~= "" then
+			local branch, author, date = line:match("([^|]+)|([^|]*)|([^|]*)")
+			if branch then
+				table.insert(branches, {
+					name = branch,
+					author = author or "",
+					date = date or "",
+				})
+			end
 		end
 	end
 
@@ -41,12 +44,47 @@ local function create_picker(include_remote)
 
 	local branches = get_branches(include_remote)
 
+	-- Calculate max widths for nice alignment
+	local max_branch_len = 30
+	local max_author_len = 15
+	for _, b in ipairs(branches) do
+		max_branch_len = math.max(max_branch_len, #b.name)
+		max_author_len = math.max(max_author_len, #b.author)
+	end
+	-- Cap the widths to keep things reasonable
+	max_branch_len = math.min(max_branch_len, 50)
+	max_author_len = math.min(max_author_len, 20)
+
+	local displayer = entry_display.create({
+		separator = " ",
+		items = {
+			{ width = max_branch_len },
+			{ width = max_author_len },
+			{ remaining = true },
+		},
+	})
+
+	local make_display = function(entry)
+		return displayer({
+			{ entry.value.name, "TelescopeResultsIdentifier" },
+			{ entry.value.author, "TelescopeResultsComment" },
+			{ entry.value.date, "TelescopeResultsNumber" },
+		})
+	end
+
 	pickers
 		.new({}, {
 			prompt_title = prompt_title,
 			previewer = false,
 			finder = finders.new_table({
 				results = branches,
+				entry_maker = function(branch)
+					return {
+						value = branch,
+						display = make_display,
+						ordinal = branch.name .. " " .. branch.author,
+					}
+				end,
 			}),
 			sorter = conf.generic_sorter({}),
 			attach_mappings = function(prompt_bufnr, map)
@@ -58,7 +96,7 @@ local function create_picker(include_remote)
 					end
 					actions.close(prompt_bufnr)
 
-					local branch_name = selection[1]
+					local branch_name = selection.value.name
 					-- Remove "origin/" or "remotes/origin/" prefix for remote branches
 					local local_branch = branch_name:gsub("^remotes/", ""):gsub("^origin/", "")
 
@@ -73,7 +111,7 @@ local function create_picker(include_remote)
 						return
 					end
 
-					local branch_name = selection[1]
+					local branch_name = selection.value.name
 
 					-- Check if this is a remote branch
 					if branch_name:match("^origin/") or branch_name:match("^remotes/") then
