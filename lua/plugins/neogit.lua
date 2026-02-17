@@ -14,5 +14,15 @@ return {
             diffview = true,
             telescope = true,
         },
+        commit_editor = {
+            show_staged_diff = true,
+        },
+        signs = {
+            hunk = { "", "" },
+            item = { ">", "v" },
+            section = { ">", "v" },
+        },
+        process_spinner = true,
+        graph_style = "unicode",
     },
 }
