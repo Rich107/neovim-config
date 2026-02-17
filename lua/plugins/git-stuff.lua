@@ -2,8 +2,43 @@ return {
 	{ "tpope/vim-fugitive" },
 	{
 		"sindrets/diffview.nvim",
-		cmd = { "DiffviewOpen", "DiffviewClose" },
+		cmd = { "DiffviewOpen", "DiffviewClose", "DiffviewFileHistory" },
 		dependencies = { "nvim-lua/plenary.nvim" },
+		opts = {
+			enhanced_diff_hl = true, -- Better diff highlighting
+			view = {
+				default = {
+					layout = "diff2_horizontal", -- Side-by-side split
+					winbar_info = true,
+				},
+				merge_tool = {
+					layout = "diff3_horizontal",
+				},
+				file_history = {
+					layout = "diff2_horizontal",
+				},
+			},
+			file_panel = {
+				listing_style = "tree",
+				win_config = {
+					position = "left",
+					width = 35,
+				},
+			},
+			hooks = {
+				-- Enable scrollbind and cursorbind for all diff views
+				diff_buf_read = function(bufnr)
+					-- Set scrollbind and cursorbind for synchronized scrolling
+					vim.schedule(function()
+						local win = vim.fn.bufwinid(bufnr)
+						if win ~= -1 then
+							vim.api.nvim_win_set_option(win, "scrollbind", true)
+							vim.api.nvim_win_set_option(win, "cursorbind", true)
+						end
+					end)
+				end,
+			},
+		},
 	},
 	{
 		"kdheepak/lazygit.nvim",
@@ -171,10 +206,20 @@ return {
 		end, { desc = "Git pull" })
 		
 		-- Auto command to open commit messages in floating window
+		-- Only for vim-fugitive's :Git commit command (not Neogit or external git)
 		vim.api.nvim_create_autocmd("FileType", {
 			pattern = "gitcommit",
 			callback = function()
+				-- Only trigger for fugitive commits (fugitive uses a specific buffer naming)
 				local buf = vim.api.nvim_get_current_buf()
+				local buf_name = vim.api.nvim_buf_get_name(buf)
+				
+				-- Only handle fugitive commit buffers (they have "fugitive://" or index in path)
+				-- Skip COMMIT_EDITMSG which is used by Neogit and external git
+				if not buf_name:match("fugitive://") and not buf_name:match("%.git/index") then
+					return
+				end
+				
 				local current_win = vim.api.nvim_get_current_win()
 				
 				-- Only convert to floating if it's not already floating
@@ -186,8 +231,8 @@ return {
 					local row = 0
 					local col = 0
 					
-					-- Close current window
-					vim.api.nvim_win_close(current_win, false)
+					-- Close current window (force to avoid E37)
+					vim.api.nvim_win_close(current_win, true)
 					
 					-- Open as floating window
 					vim.api.nvim_open_win(buf, true, {
