@@ -7,11 +7,24 @@ local actions = require("telescope.actions")
 local action_state = require("telescope.actions.state")
 local entry_display = require("telescope.pickers.entry_display")
 
+-- Cache the git user email
+local git_user_email = nil
+local function get_git_user_email()
+	if git_user_email then
+		return git_user_email
+	end
+	local result = vim.fn.systemlist("git config user.email")
+	if vim.v.shell_error == 0 and result[1] then
+		git_user_email = result[1]:lower()
+	end
+	return git_user_email
+end
+
 -- Get branches sorted by most recent commit with author and date
-local function get_branches(include_remote)
+local function get_branches(include_remote, my_branches_only)
 	local flag = include_remote and "-a" or ""
-	-- Format: branch name | author name | relative date
-	local format = "%(refname:short)|%(authorname)|%(committerdate:relative)"
+	-- Format: branch name | author name | author email | relative date
+	local format = "%(refname:short)|%(authorname)|%(authoremail:trim)|%(committerdate:relative)"
 	local cmd = string.format("git branch %s --sort=-committerdate --format='%s'", flag, format)
 
 	local result = vim.fn.systemlist(cmd)
@@ -19,17 +32,27 @@ local function get_branches(include_remote)
 		return {}
 	end
 
+	local user_email = my_branches_only and get_git_user_email() or nil
+
 	local branches = {}
 	for _, line in ipairs(result) do
 		-- Skip HEAD pointer entries and empty lines
 		if not line:match("HEAD") and line ~= "" then
-			local branch, author, date = line:match("([^|]+)|([^|]*)|([^|]*)")
+			local branch, author, email, date = line:match("([^|]+)|([^|]*)|([^|]*)|([^|]*)")
 			if branch then
-				table.insert(branches, {
-					name = branch,
-					author = author or "",
-					date = date or "",
-				})
+				-- Filter by user email if my_branches_only is set
+				local include = true
+				if my_branches_only and user_email then
+					include = email:lower() == user_email
+				end
+
+				if include then
+					table.insert(branches, {
+						name = branch,
+						author = author or "",
+						date = date or "",
+					})
+				end
 			end
 		end
 	end
@@ -37,12 +60,31 @@ local function get_branches(include_remote)
 	return branches
 end
 
-local function create_picker(include_remote)
+local function create_picker(include_remote, my_branches_only)
 	local mode = include_remote and "All" or "Local"
-	local toggle_hint = include_remote and "<C-a>: local only" or "<C-a>: include remote"
-	local prompt_title = string.format("Git Branches [%s] (<CR>: checkout | <C-x>: delete | %s)", mode, toggle_hint)
+	if my_branches_only then
+		mode = "Mine"
+	end
 
-	local branches = get_branches(include_remote)
+	local hints = {}
+	if not include_remote then
+		table.insert(hints, "<C-a>: all")
+	else
+		table.insert(hints, "<C-a>: local")
+	end
+	if not my_branches_only then
+		table.insert(hints, "<C-m>: mine")
+	else
+		table.insert(hints, "<C-m>: all")
+	end
+
+	local prompt_title = string.format(
+		"Git Branches [%s] (<CR>: checkout | <C-x>: delete | %s)",
+		mode,
+		table.concat(hints, " | ")
+	)
+
+	local branches = get_branches(include_remote or my_branches_only, my_branches_only)
 
 	-- Calculate max widths for nice alignment
 	local max_branch_len = 30
@@ -134,7 +176,7 @@ local function create_picker(include_remote)
 						actions.close(prompt_bufnr)
 						-- Reopen picker to refresh
 						vim.schedule(function()
-							create_picker(include_remote)
+							create_picker(include_remote, my_branches_only)
 						end)
 					else
 						print("Failed to delete branch: " .. result)
@@ -146,8 +188,21 @@ local function create_picker(include_remote)
 					local current_line = action_state.get_current_line()
 					actions.close(prompt_bufnr)
 					vim.schedule(function()
-						create_picker(not include_remote)
-						-- Restore the search text if there was any
+						create_picker(not include_remote, false)
+						if current_line and current_line ~= "" then
+							vim.schedule(function()
+								vim.api.nvim_feedkeys(current_line, "n", false)
+							end)
+						end
+					end)
+				end
+
+				-- Toggle my branches filter with Ctrl+m
+				local function toggle_my_branches()
+					local current_line = action_state.get_current_line()
+					actions.close(prompt_bufnr)
+					vim.schedule(function()
+						create_picker(false, not my_branches_only)
 						if current_line and current_line ~= "" then
 							vim.schedule(function()
 								vim.api.nvim_feedkeys(current_line, "n", false)
@@ -160,6 +215,8 @@ local function create_picker(include_remote)
 				map("n", "<C-x>", delete_branch)
 				map("i", "<C-a>", toggle_remote)
 				map("n", "<C-a>", toggle_remote)
+				map("i", "<C-m>", toggle_my_branches)
+				map("n", "<C-m>", toggle_my_branches)
 
 				return true
 			end,
@@ -169,7 +226,7 @@ end
 
 function M.pick_branch()
 	-- Start with local branches only
-	create_picker(false)
+	create_picker(false, false)
 end
 
 return M
