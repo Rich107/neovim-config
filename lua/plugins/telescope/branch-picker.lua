@@ -73,9 +73,9 @@ local function create_picker(include_remote, my_branches_only)
 		table.insert(hints, "<C-a>: local")
 	end
 	if not my_branches_only then
-		table.insert(hints, "<C-m>: mine")
+		table.insert(hints, "<C-y>: mine")
 	else
-		table.insert(hints, "<C-m>: all")
+		table.insert(hints, "<C-y>: all")
 	end
 
 	local prompt_title = string.format(
@@ -142,7 +142,7 @@ local function create_picker(include_remote, my_branches_only)
 					-- Remove "origin/" or "remotes/origin/" prefix for remote branches
 					local local_branch = branch_name:gsub("^remotes/", ""):gsub("^origin/", "")
 
-					vim.cmd("Git checkout " .. vim.fn.shellescape(local_branch))
+					vim.cmd("Git checkout " .. local_branch)
 				end)
 
 				-- Delete branch with Ctrl+x
@@ -215,8 +215,8 @@ local function create_picker(include_remote, my_branches_only)
 				map("n", "<C-x>", delete_branch)
 				map("i", "<C-a>", toggle_remote)
 				map("n", "<C-a>", toggle_remote)
-				map("i", "<C-m>", toggle_my_branches)
-				map("n", "<C-m>", toggle_my_branches)
+			map("i", "<C-y>", toggle_my_branches)
+			map("n", "<C-y>", toggle_my_branches)
 
 				return true
 			end,
