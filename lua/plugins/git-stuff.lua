@@ -182,7 +182,7 @@ return {
 				
 				-- Close with q in normal mode (Esc now just exits insert mode normally)
 				vim.keymap.set("n", "q", close_window, { buffer = buf })
-				vim.keymap.set("n", "<Esc>", close_window, { buffer = buf })
+				-- vim.keymap.set("n", "<Esc>", close_window, { buffer = buf })
 				
 				-- Start in insert mode
 				vim.cmd("startinsert")
