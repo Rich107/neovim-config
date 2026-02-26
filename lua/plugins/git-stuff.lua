@@ -133,14 +133,15 @@ return {
 			vim.api.nvim_win_set_option(win, "spell", true)
 			vim.api.nvim_win_set_option(win, "spelllang", "en")
 				
-				-- Set buffer options
-				vim.api.nvim_set_option_value("buftype", "prompt", { buf = buf })
-				vim.fn.prompt_setprompt(buf, "Branch: ")
+				-- Set buffer options - use scratch buffer instead of prompt for normal mode support
+				vim.api.nvim_set_option_value("buftype", "nofile", { buf = buf })
+				vim.api.nvim_set_option_value("bufhidden", "wipe", { buf = buf })
+				vim.api.nvim_set_option_value("swapfile", false, { buf = buf })
 				
 			-- Function to create the branch
 			local function do_create_branch()
 				local lines = vim.api.nvim_buf_get_lines(buf, 0, -1, false)
-				local input = lines[1]:gsub("^Branch: ", "")
+				local input = lines[1] or ""
 				
 				-- Trim whitespace from edges
 				input = input:gsub("^%s*(.-)%s*$", "%1")
@@ -169,12 +170,19 @@ return {
 				end
 			end
 				
-				-- Set up keymaps for the prompt buffer
-				vim.keymap.set("i", "<CR>", do_create_branch, { buffer = buf })
-				vim.keymap.set("i", "<Esc>", function()
+				-- Function to close the window
+				local function close_window()
 					vim.api.nvim_win_close(win, true)
-					vim.api.nvim_buf_delete(buf, { force = true })
-				end, { buffer = buf })
+				end
+				
+				-- Set up keymaps for the buffer
+				-- Submit with Enter in both modes
+				vim.keymap.set("i", "<CR>", do_create_branch, { buffer = buf })
+				vim.keymap.set("n", "<CR>", do_create_branch, { buffer = buf })
+				
+				-- Close with q in normal mode (Esc now just exits insert mode normally)
+				vim.keymap.set("n", "q", close_window, { buffer = buf })
+				vim.keymap.set("n", "<Esc>", close_window, { buffer = buf })
 				
 				-- Start in insert mode
 				vim.cmd("startinsert")
