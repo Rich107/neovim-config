@@ -84,17 +84,28 @@ return {
 				require("plugins.telescope.pr-label-picker").pick_pr_by_label()
 			end, { desc = "Pick PRs by label" })
 		keymap.set("n", "<leader>tR", builtin.resume, { desc = "Resume last Telescope search" })
-			keymap.set("n", "<leader>ts", builtin.live_grep, { desc = "Find string in cwd" })
-			
+			-- keymap.set("n", "<leader>ts", builtin.live_grep, { desc = "Find string in cwd" })
+			--
+			-- keymap.set("v", "<leader>ts", function()
+			-- 	vim.cmd('noau normal! "vy"')
+			-- 	local selected_text = vim.fn.getreg('v')
+			-- 	local escaped_text = selected_text:gsub("[%(%)%[%]%{%}%^%$%*%+%?%.%|%-]", "\\%1")
+			-- 	builtin.live_grep({ default_text = escaped_text })
+			-- end, { desc = "Find selected string in cwd" })
+
+			-- Test-aware live grep: in the picker, press <C-^> to cycle: all -> tests -> non-tests
+			keymap.set("n", "<leader>ts", function()
+				require("plugins.telescope.test-aware-grep").live_grep_test_aware()
+			end, { desc = "Find string in cwd (cycle tests/non-tests with <C-^>)" })
+
 			keymap.set("v", "<leader>ts", function()
-				-- Get the visually selected text
 				vim.cmd('noau normal! "vy"')
-				local selected_text = vim.fn.getreg('v')
-				-- Escape special regex characters
+				local selected_text = vim.fn.getreg("v")
 				local escaped_text = selected_text:gsub("[%(%)%[%]%{%}%^%$%*%+%?%.%|%-]", "\\%1")
-				-- Start live_grep with the escaped text as default
-				builtin.live_grep({ default_text = escaped_text })
-			end, { desc = "Find selected string in cwd" })
+				require("plugins.telescope.test-aware-grep").live_grep_test_aware({
+					default_text = escaped_text,
+				})
+			end, { desc = "Find selected string in cwd (cycle tests/non-tests with <C-^>)" })
 			
 			keymap.set({ "n", "v" }, "<leader>tv", builtin.grep_string, { desc = "Find selected string in cwd" })
 			-- keymap.set("n", "<leader>tc", builtin.commands, { desc = "Find string under cursor in cwd" })
