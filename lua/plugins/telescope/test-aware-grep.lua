@@ -108,11 +108,33 @@ local function live_grep_test_aware(opts)
 				mode_idx = (mode_idx % #MODES) + 1
 				local mode = MODES[mode_idx]
 				local current = action_state.get_current_picker(prompt_bufnr)
-				current:refresh(make_finder(opts, mode), { reset_prompt = false })
-				current:change_prompt_prefix(prompt_prefix_for(mode), "TelescopePromptPrefix")
+
+				-- Capture the user's typed text BEFORE we swap finders / prefix,
+				-- using the picker's current prefix length so we strip exactly the prefix.
+				local line = vim.api.nvim_buf_get_lines(prompt_bufnr, 0, 1, false)[1] or ""
+				local typed = line:sub(#current.prompt_prefix + 1)
+
+				-- Swap finder and prefix in one refresh call; reset_prompt=true rebuilds
+				-- the prompt line as `new_prefix .. typed`, which keeps the typed text and
+				-- forces the new finder's command_generator to fire for that prompt.
+				current:refresh(make_finder(opts, mode), {
+					reset_prompt = true,
+					new_prefix = { prompt_prefix_for(mode), "TelescopePromptPrefix" },
+				})
+				current:reset_prompt(typed)
+
 				if current.prompt_border and current.prompt_border.change_title then
 					current.prompt_border:change_title(title_for(mode))
 				end
+
+				-- Refresh the previewer once the new first entry has been selected.
+				vim.defer_fn(function()
+					if current and current.refresh_previewer then
+						pcall(function()
+							current:refresh_previewer()
+						end)
+					end
+				end, 80)
 			end
 			map("i", CYCLE_KEY, cycle_mode)
 			map("n", CYCLE_KEY, cycle_mode)
