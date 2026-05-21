@@ -762,6 +762,7 @@ return {
 				})
 			end, { desc = "[S]earch [/] in Open Files" })
 			require("plugins.telescope.smartgrep").setup()
+			require("plugins.telescope.testid-picker").setup()
 			require("telescope").load_extension("ui-select")
 			require("telescope").load_extension("fzf")
 
