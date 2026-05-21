@@ -385,3 +385,7 @@ local open_in_finder = function()
 end
 
 vim.keymap.set("n", "<leader>of", open_in_finder, { noremap = true, silent = true, desc = "[o]pen in [f]inder" })
+
+local html_tools = require("utils.html_tools")
+vim.keymap.set("n", "<leader>bo", html_tools.open_in_browser, { noremap = true, silent = true, desc = "[b]rowser [o]pen current file" })
+vim.keymap.set("n", "<leader>bs", html_tools.serve_in_tmux, { noremap = true, silent = true, desc = "[b]rowser [s]erve directory (python http.server :6967)" })
