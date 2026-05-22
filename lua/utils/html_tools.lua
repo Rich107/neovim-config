@@ -2,6 +2,7 @@ local M = {}
 
 local WINDOW_NAME = "html-serve"
 local PORT = 6967
+local NTFY_TOPIC = "phone-re-supersecret-local-ip"
 
 local PY_SERVER = [[
 import http.server,socketserver,os,mimetypes
@@ -79,6 +80,14 @@ function M.serve_in_tmux()
 		url,
 		local_url
 	)
+
+	vim.fn.jobstart({
+		"curl", "-s", "-X", "POST",
+		"-H", "Title: nvim file server",
+		"-H", "Click: " .. url,
+		"-d", vim.fn.fnamemodify(full_path, ":t"),
+		"https://ntfy.sh/" .. NTFY_TOPIC,
+	}, { detach = true })
 
 	local tmux_env = vim.fn.getenv("TMUX")
 	if tmux_env == vim.NIL or tmux_env == "" then
