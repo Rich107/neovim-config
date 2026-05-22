@@ -24,15 +24,22 @@ socketserver.TCPServer(("0.0.0.0",]] .. PORT .. [[),H).serve_forever()
 ]]
 
 local function get_local_ip()
-	local ip = vim.fn.system("ipconfig getifaddr en0 2>/dev/null")
-	ip = ip:gsub("%s+$", "")
-	if ip == "" then
-		ip = vim.fn.system("ipconfig getifaddr en1 2>/dev/null"):gsub("%s+$", "")
+	local iface = vim.fn.system("route -n get default 2>/dev/null | awk '/interface:/ {print $2}'"):gsub("%s+$", "")
+	if iface ~= "" then
+		local ip = vim.fn.system("ipconfig getifaddr " .. iface .. " 2>/dev/null"):gsub("%s+$", "")
+		if ip ~= "" then
+			return ip
+		end
 	end
-	if ip == "" then
-		return "localhost"
+
+	for i = 0, 9 do
+		local ip = vim.fn.system("ipconfig getifaddr en" .. i .. " 2>/dev/null"):gsub("%s+$", "")
+		if ip ~= "" then
+			return ip
+		end
 	end
-	return ip
+
+	return "localhost"
 end
 
 function M.open_in_browser()
@@ -61,11 +68,22 @@ function M.serve_in_tmux()
 
 	local ip = get_local_ip()
 	local url = string.format("http://%s:%d/", ip, PORT)
+	local local_url = string.format("http://localhost:%d/", PORT)
+
+	vim.fn.setreg("+", url)
+	vim.fn.setreg('"', url)
+
+	local msg = string.format(
+		"Serving %s\n  LAN:    %s  (copied to clipboard)\n  Local:  %s",
+		full_path,
+		url,
+		local_url
+	)
 
 	local tmux_env = vim.fn.getenv("TMUX")
 	if tmux_env == vim.NIL or tmux_env == "" then
 		vim.cmd("split | terminal " .. cmd)
-		vim.notify(string.format("Serving %s at %s", full_path, url), vim.log.levels.INFO)
+		vim.notify(msg, vim.log.levels.INFO)
 		return
 	end
 
@@ -86,7 +104,7 @@ function M.serve_in_tmux()
 		vim.fn.system(create_cmd)
 	end
 
-	vim.notify(string.format("Serving %s at %s", full_path, url), vim.log.levels.INFO)
+	vim.notify(msg, vim.log.levels.INFO)
 end
 
 return M

@@ -49,11 +49,8 @@ return {
 			-- 	require("telescope.builtin").find_files({ "--hidden" })
 			-- end, { desc = "Fuzzy find files + failing to find hidden files" })
 			keymap.set("n", "<leader>tf", function()
-				require("telescope.builtin").find_files({
-					find_command = { "rg", "--hidden", "--files" },
-					prompt_prefix = "🔭 ",
-				})
-			end, { desc = "Fuzzy find files + hidden files" })
+				require("plugins.telescope.test-aware-files").find_files_test_aware()
+			end, { desc = "Find files (cycle tests/non-tests with <C-l>)" })
 			
 			keymap.set("n", "<leader>tF", function()
 				require("telescope.builtin").find_files({
@@ -106,6 +103,11 @@ return {
 					default_text = escaped_text,
 				})
 			end, { desc = "Find selected string in cwd (cycle tests/non-tests with <C-^>)" })
+
+			-- Git-status grep: <C-l> in the picker cycles all / changed / staged / unstaged
+			keymap.set("n", "<leader>tG", function()
+				require("plugins.telescope.git-status-grep").git_status_grep()
+			end, { desc = "Live grep restricted to git-changed files (cycle with <C-l>)" })
 			
 			keymap.set({ "n", "v" }, "<leader>tv", builtin.grep_string, { desc = "Find selected string in cwd" })
 			-- keymap.set("n", "<leader>tc", builtin.commands, { desc = "Find string under cursor in cwd" })

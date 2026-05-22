@@ -4,40 +4,13 @@ local make_entry = require("telescope.make_entry")
 local conf = require("telescope.config").values
 local actions = require("telescope.actions")
 local action_state = require("telescope.actions.state")
+local git_utils = require("plugins.telescope.git-utils")
 
 local M = {}
 
-local get_git_diff_files = function(opts)
-	opts = opts or {}
-	local cwd = opts.cwd or vim.loop.cwd()
-
-	local remote_branches_cmd = "git branch -r"
-	local remote_branches_output = vim.fn.system(remote_branches_cmd)
-	local remote_branches = vim.split(remote_branches_output, "\n")
-
-	local primary_branch
-	for _, branch in ipairs(remote_branches) do
-		branch = branch:gsub("^%s+", "") -- Trim leading whitespace
-		if branch == "origin/main" or branch == "origin/master" or branch == "origin/production" then
-			primary_branch = branch
-			break
-		end
-	end
-
-	if not primary_branch then
-		vim.notify("No primary branch (main, master, or production) found on remote 'origin'.", vim.log.levels.ERROR)
-		return
-	end
-
-	local git_diff_command = "git diff --name-only " .. primary_branch .. "..."
-	local files = vim.fn.systemlist(git_diff_command)
-
-	return files
-end
-
 local diff_files_picker = function(opts)
 	opts = opts or {}
-	opts.results = get_git_diff_files(opts)
+	opts.results = git_utils.get_git_diff_files(opts)
 
 	if not opts.results or #opts.results == 0 then
 		vim.notify("No changed files found.", vim.log.levels.INFO)
