@@ -327,6 +327,10 @@ vim.keymap.set("n", "<leader>gdo", "<cmd>DiffviewOpen<CR>", { silent = true, des
 vim.keymap.set("n", "<leader>gdc", "<cmd>DiffviewClose<CR>", { silent = true, desc = "Diff Split Close" })
 -- Open a 3-way diff split for resolving merge conflicts
 vim.keymap.set("n", "<leader>gds", "<cmd>Gdiffsplit!<CR>", { silent = true, desc = "Git Diff Split" })
+-- Diffview of this branch vs main (merge-base) — panel of changed files + diff
+vim.keymap.set("n", "<leader>gdm", function()
+	require("plugins.telescope.git-utils").open_diff_vs_main()
+end, { silent = true, desc = "Diff Branch vs Main" })
 
 vim.api.nvim_set_keymap("n", "<C-d>", "<C-d>zz", { noremap = true, silent = true })
 vim.api.nvim_set_keymap("n", "<C-u>", "<C-u>zz", { noremap = true, silent = true })

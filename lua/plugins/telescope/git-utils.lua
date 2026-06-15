@@ -64,4 +64,29 @@ M.get_unstaged_files = function()
 	return split_nul(output)
 end
 
+-- Open Diffview comparing the current branch against the merge-base with the
+-- primary remote branch (origin/main, master, or production). This shows only
+-- what this branch changed since it diverged, with a file panel to jump through.
+M.open_diff_vs_main = function()
+	local remote_branches_output = vim.fn.system("git branch -r")
+	local remote_branches = vim.split(remote_branches_output, "\n")
+
+	local primary_branch
+	for _, branch in ipairs(remote_branches) do
+		branch = branch:gsub("^%s+", "") -- Trim leading whitespace
+		if branch == "origin/main" or branch == "origin/master" or branch == "origin/production" then
+			primary_branch = branch
+			break
+		end
+	end
+
+	if not primary_branch then
+		vim.notify("No primary branch (main, master, or production) found on remote 'origin'.", vim.log.levels.ERROR)
+		return
+	end
+
+	-- Three-dot: diff against the merge-base, matching <leader>fd behavior.
+	vim.cmd("DiffviewOpen " .. primary_branch .. "...HEAD")
+end
+
 return M

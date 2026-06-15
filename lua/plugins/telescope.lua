@@ -80,6 +80,9 @@ return {
 			keymap.set("n", "<leader>tp", function()
 				require("plugins.telescope.pr-label-picker").pick_pr_by_label()
 			end, { desc = "Pick PRs by label" })
+			keymap.set("n", "<leader>pt", function()
+				require("plugins.telescope.prompt-template-picker").pick_template()
+			end, { desc = "Pick a prompt template (load into current buffer)" })
 		keymap.set("n", "<leader>tR", builtin.resume, { desc = "Resume last Telescope search" })
 			-- keymap.set("n", "<leader>ts", builtin.live_grep, { desc = "Find string in cwd" })
 			--
