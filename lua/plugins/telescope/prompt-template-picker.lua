@@ -10,6 +10,23 @@ local function templates_dir()
 	return vim.fs.joinpath(vim.fn.stdpath("config"), "prompts")
 end
 
+-- Expand dynamic tokens in template text. Supported:
+--   {{date}}            -> today as YYYY-MM-DD
+--   {{date:%FORMAT}}    -> today via os.date with a custom strftime format
+local function expand_tokens(lines)
+	local out = {}
+	for _, line in ipairs(lines) do
+		line = line:gsub("{{date:([^}]+)}}", function(fmt)
+			return os.date(fmt)
+		end)
+		line = line:gsub("{{date}}", function()
+			return os.date("%Y-%m-%d")
+		end)
+		table.insert(out, line)
+	end
+	return out
+end
+
 -- Replace the contents of the current buffer with the given lines, then drop the
 -- cursor on the first {{placeholder}} (if any) so the template is ready to fill.
 local function load_into_current_buffer(lines)
@@ -63,7 +80,7 @@ function M.pick_template()
 					return
 				end
 
-				load_into_current_buffer(lines)
+				load_into_current_buffer(expand_tokens(lines))
 			end)
 			return true
 		end,
