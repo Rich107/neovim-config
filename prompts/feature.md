@@ -23,6 +23,7 @@ Before doing anything, ask me lots of clarifying questions using the multi-selec
    - Commit that test on its own ("test: ...") BEFORE writing any implementation.
    - Then implement the minimum needed to make it pass and commit the fix separately.
    - Repeat for each behaviour.
+   - For each step ensure that you update a todo markdown so progress can be tracked.
 3. **Done when all tests are passing.**
 4. Open the PR.
 
